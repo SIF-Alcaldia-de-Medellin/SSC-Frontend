@@ -1,0 +1,289 @@
+{
+  "usuarios": [
+    {
+      "USU_CEDULA": 12345678,
+      "USU_EMAIL": "admin@medellin.gov.co",
+      "USU_PASSWORD": "$2b$10$example_hash",
+      "USU_ROL": "admin",
+      "USU_NOMBRE": "María González",
+      "USU_CREATED_AT": "2024-01-15T09:00:00Z",
+      "USU_UPDATED_AT": "2024-01-15T09:00:00Z"
+    },
+    {
+      "USU_CEDULA": 87654321,
+      "USU_EMAIL": "supervisor@medellin.gov.co",
+      "USU_PASSWORD": "$2b$10$example_hash",
+      "USU_ROL": "supervisor",
+      "USU_NOMBRE": "Carlos Ramírez",
+      "USU_CREATED_AT": "2024-01-15T09:00:00Z",
+      "USU_UPDATED_AT": "2024-01-15T09:00:00Z"
+    },
+    {
+      "USU_CEDULA": 11223344,
+      "USU_EMAIL": "jefe@medellin.gov.co",
+      "USU_PASSWORD": "$2b$10$example_hash",
+      "USU_ROL": "jefe",
+      "USU_NOMBRE": "Ana Martínez",
+      "USU_CREATED_AT": "2024-01-15T09:00:00Z",
+      "USU_UPDATED_AT": "2024-01-15T09:00:00Z"
+    }
+  ],
+  "contratos": [
+    {
+      "CON_ID": 1,
+      "CON_USU_CEDULA": 12345678,
+      "CON_NRO_CONTRATO": 460010403,
+      "CON_ANO_SUSCRIPCION": 2025,
+      "CON_PROGRAMA": "Infraestructura Verde",
+      "CON_TIPO_CONTRATO": "INTERVENTORÍA",
+      "CON_OBJETO": "CONTRATO INTERADMINISTRATIVO DE MANDATO SIN REPRESENTACIÓN PARA LA DISPOSICIÓN, MANTENIMIENTO Y CONSERVACIÓN DE LA INFRAESTRUCTURA VERDE EXISTENTE",
+      "CON_IDENTIFICADOR_SIMPLE": "#460010403",
+      "CON_SUPERVISOR_TECNICO": "TERMINALES DE TRANSPORTE MEDELLÍN S.A.",
+      "CON_SUPLENTES": "Juan Pérez, Laura Gómez",
+      "CON_APOYO": "Equipo Técnico Municipal",
+      "CON_ESTADO": "ACTIVO",
+      "CON_CONTRATISTA": "TERMINALES DE TRANSPORTE MEDELLÍN S.A.",
+      "CON_NRO_PROCESO": "CV-2025-001",
+      "CON_FECHA_INI": "2025-01-01",
+      "CON_FECHA_TER_INI": "2025-09-01",
+      "CON_FECHA_TER_ACT": "2025-10-15",
+      "CON_VALOR_INI": 1645728320,
+      "CON_VALOR_TOTAL": 1745728320
+    },
+    {
+      "CON_ID": 2,
+      "CON_USU_CEDULA": 87654321,
+      "CON_NRO_CONTRATO": 460010404,
+      "CON_ANO_SUSCRIPCION": 2025,
+      "CON_PROGRAMA": "Movilidad Sostenible",
+      "CON_TIPO_CONTRATO": "OBRA PÚBLICA",
+      "CON_OBJETO": "CONSTRUCCIÓN Y ADECUACIÓN DE CICLORRUTAS EN LA COMUNA 10 DE MEDELLÍN",
+      "CON_IDENTIFICADOR_SIMPLE": "#460010404",
+      "CON_SUPERVISOR_TECNICO": "EMPRESA DE DESARROLLO URBANO",
+      "CON_SUPLENTES": "Pedro López, Sandra Cruz",
+      "CON_APOYO": "Secretaría de Movilidad",
+      "CON_ESTADO": "ACTIVO",
+      "CON_CONTRATISTA": "CONSTRUCTORA VÍAS S.A.S.",
+      "CON_NRO_PROCESO": "CV-2025-002",
+      "CON_FECHA_INI": "2025-02-01",
+      "CON_FECHA_TER_INI": "2025-08-01",
+      "CON_FECHA_TER_ACT": "2025-08-01",
+      "CON_VALOR_INI": 2500000000,
+      "CON_VALOR_TOTAL": 2500000000
+    },
+    {
+      "CON_ID": 3,
+      "CON_USU_CEDULA": 11223344,
+      "CON_NRO_CONTRATO": 460010405,
+      "CON_ANO_SUSCRIPCION": 2024,
+      "CON_PROGRAMA": "Espacio Público",
+      "CON_TIPO_CONTRATO": "CONSULTORÍA",
+      "CON_OBJETO": "DISEÑO Y SUPERVISIÓN DE PARQUES LINEALES EN QUEBRADAS DE MEDELLÍN",
+      "CON_IDENTIFICADOR_SIMPLE": "#460010405",
+      "CON_SUPERVISOR_TECNICO": "ÁREA METROPOLITANA DEL VALLE DE ABURRÁ",
+      "CON_SUPLENTES": "Miguel Torres, Elena Vargas",
+      "CON_APOYO": "Secretaría de Medio Ambiente",
+      "CON_ESTADO": "TERMINADO",
+      "CON_CONTRATISTA": "CONSULTORES AMBIENTALES LTDA",
+      "CON_NRO_PROCESO": "CV-2024-015",
+      "CON_FECHA_INI": "2024-03-01",
+      "CON_FECHA_TER_INI": "2024-12-01",
+      "CON_FECHA_TER_ACT": "2024-11-15",
+      "CON_VALOR_INI": 850000000,
+      "CON_VALOR_TOTAL": 920000000
+    }
+  ],
+  "seguimiento_general": [
+    {
+      "SEG_ID": 1,
+      "SEG_CON_ID": 1,
+      "SEG_AVANCE_FINANCIERO": 45,
+      "SEG_AVANCE_FISICO": 42,
+      "SEG_CREATED_AT": "2025-01-20T14:30:00Z",
+      "SEG_OBSERVACIONES": "El proyecto avanza según cronograma. Se han completado las actividades de diagnóstico y diseño preliminar. Próxima fase: inicio de intervenciones en zona norte."
+    },
+    {
+      "SEG_ID": 2,
+      "SEG_CON_ID": 2,
+      "SEG_AVANCE_FINANCIERO": 25,
+      "SEG_AVANCE_FISICO": 30,
+      "SEG_CREATED_AT": "2025-01-18T16:45:00Z",
+      "SEG_OBSERVACIONES": "Iniciadas las obras de ciclorrutas en el sector A. Se presenta leve retraso por lluvias pero se espera recuperar el cronograma."
+    },
+    {
+      "SEG_ID": 3,
+      "SEG_CON_ID": 3,
+      "SEG_AVANCE_FINANCIERO": 100,
+      "SEG_AVANCE_FISICO": 100,
+      "SEG_CREATED_AT": "2024-11-20T10:00:00Z",
+      "SEG_OBSERVACIONES": "Proyecto finalizado exitosamente. Entrega de diseños completos y supervisión técnica finalizada según especificaciones contractuales."
+    }
+  ],
+  "adiciones": [
+    {
+      "ADI_ID": 1,
+      "ADI_CON_ID": 1,
+      "ADI_VALOR_ADICION": 100000000,
+      "ADI_FECHA": "2025-01-15",
+      "ADI_CREATED_AT": "2025-01-15T11:20:00Z",
+      "ADI_OBSERVACIONES": "Adición para ampliación del alcance del proyecto incluyendo zona centro de la ciudad. Aprobada por comité técnico."
+    },
+    {
+      "ADI_ID": 2,
+      "ADI_CON_ID": 3,
+      "ADI_VALOR_ADICION": 70000000,
+      "ADI_FECHA": "2024-08-10",
+      "ADI_CREATED_AT": "2024-08-10T15:30:00Z",
+      "ADI_OBSERVACIONES": "Adición para estudios complementarios de impacto ambiental solicitados por autoridad competente."
+    }
+  ],
+  "modificaciones": [
+    {
+      "MOD_ID": 1,
+      "MOD_CON_ID": 1,
+      "MOD_TIPO": "PLAZO",
+      "MOD_FECHA_INICIO": "2025-09-01",
+      "MOD_FECHA_FINAL": "2025-10-15",
+      "MOD_DURACION": 44,
+      "MOD_CREATED_AT": "2025-01-10T09:15:00Z",
+      "MOD_OBSERVACIONES": "Prórroga solicitada por el contratista debido a condiciones climáticas adversas que afectaron el cronograma inicial."
+    },
+    {
+      "MOD_ID": 2,
+      "MOD_CON_ID": 2,
+      "MOD_TIPO": "ALCANCE",
+      "MOD_FECHA_INICIO": "2025-02-01",
+      "MOD_FECHA_FINAL": "2025-08-01",
+      "MOD_DURACION": 0,
+      "MOD_CREATED_AT": "2024-12-20T13:45:00Z",
+      "MOD_OBSERVACIONES": "Modificación del alcance para incluir señalización vertical y horizontal adicional en las ciclorrutas."
+    }
+  ],
+  "cuos": [
+    {
+      "CUO_ID": 1,
+      "CUO_CON_ID": 1,
+      "CUO_NRO": "CUO-001-IV",
+      "CUO_LATITUD": 6.2442,
+      "CUO_LONGITUD": -75.5812,
+      "CUO_COMUNA": "Comuna 10 - La Candelaria",
+      "CUO_BARRIO": "Centro",
+      "CUO_DESCRIPCION": "Centro urbano principal para gestión de infraestructura verde en el centro de la ciudad"
+    },
+    {
+      "CUO_ID": 2,
+      "CUO_CON_ID": 1,
+      "CUO_NRO": "CUO-002-IV",
+      "CUO_LATITUD": 6.2518,
+      "CUO_LONGITUD": -75.5636,
+      "CUO_COMUNA": "Comuna 4 - Aranjuez",
+      "CUO_BARRIO": "Aranjuez",
+      "CUO_DESCRIPCION": "Centro de operaciones para la zona norte, gestión de parques y zonas verdes"
+    },
+    {
+      "CUO_ID": 3,
+      "CUO_CON_ID": 2,
+      "CUO_NRO": "CUO-001-MS",
+      "CUO_LATITUD": 6.2486,
+      "CUO_LONGITUD": -75.5647,
+      "CUO_COMUNA": "Comuna 10 - La Candelaria",
+      "CUO_BARRIO": "Prado",
+      "CUO_DESCRIPCION": "Centro de operaciones para construcción de ciclorrutas sector A"
+    }
+  ],
+  "actividades": [
+    {
+      "ACT_ID": 1,
+      "ACT_CUO_ID": 1,
+      "ACT_ACTIVIDAD": "Mantenimiento de zonas verdes existentes",
+      "ACT_METAFISICA": 2500.5,
+      "ACT_PROYECTADO_FINANCIERO": 450000000,
+      "ACT_UNIDADES_AVANCE": "metros cuadrados"
+    },
+    {
+      "ACT_ID": 2,
+      "ACT_CUO_ID": 1,
+      "ACT_ACTIVIDAD": "Instalación de nuevo mobiliario urbano",
+      "ACT_METAFISICA": 150.0,
+      "ACT_PROYECTADO_FINANCIERO": 200000000,
+      "ACT_UNIDADES_AVANCE": "unidades"
+    },
+    {
+      "ACT_ID": 3,
+      "ACT_CUO_ID": 2,
+      "ACT_ACTIVIDAD": "Siembra de árboles nativos",
+      "ACT_METAFISICA": 300.0,
+      "ACT_PROYECTADO_FINANCIERO": 150000000,
+      "ACT_UNIDADES_AVANCE": "unidades"
+    },
+    {
+      "ACT_ID": 4,
+      "ACT_CUO_ID": 3,
+      "ACT_ACTIVIDAD": "Construcción de ciclorruta principal",
+      "ACT_METAFISICA": 5200.0,
+      "ACT_PROYECTADO_FINANCIERO": 1800000000,
+      "ACT_UNIDADES_AVANCE": "metros lineales"
+    }
+  ],
+  "seguimiento_actividades": [
+    {
+      "SEG_ID": 1,
+      "SEG_ACT_ID": 1,
+      "SEG_AVANCE_FISICO": 45.5,
+      "SEG_COSTO_APROXIMADO": 202500000,
+      "SEG_CREATED_AT": "2025-01-20T14:30:00Z",
+      "SEG_DESCRIPCION_SEGUIMIENTO": "Avance satisfactorio en mantenimiento de zonas verdes. Se han intervenido 1125 m² de los 2500 programados.",
+      "SEG_PROYECCION_ACTIVIDADES": "Se espera completar el 60% para fin de mes con buen clima."
+    },
+    {
+      "SEG_ID": 2,
+      "SEG_ACT_ID": 2,
+      "SEG_AVANCE_FISICO": 30.0,
+      "SEG_COSTO_APROXIMADO": 60000000,
+      "SEG_CREATED_AT": "2025-01-20T14:30:00Z",
+      "SEG_DESCRIPCION_SEGUIMIENTO": "Instalación de mobiliario urbano iniciada. 45 de 150 unidades instaladas.",
+      "SEG_PROYECCION_ACTIVIDADES": "Cronograma normal, entrega de materiales según programación."
+    },
+    {
+      "SEG_ID": 3,
+      "SEG_ACT_ID": 4,
+      "SEG_AVANCE_FISICO": 25.8,
+      "SEG_COSTO_APROXIMADO": 464400000,
+      "SEG_CREATED_AT": "2025-01-18T16:45:00Z",
+      "SEG_DESCRIPCION_SEGUIMIENTO": "Construcción de ciclorruta avanza según cronograma. 1341 metros lineales completados.",
+      "SEG_PROYECCION_ACTIVIDADES": "Leve retraso por lluvias, pero se recuperará en próximas semanas."
+    }
+  ],
+  "meta_info": {
+    "total_contratos": 3,
+    "contratos_activos": 2,
+    "contratos_terminados": 1,
+    "valor_total_contratos": 6065728320,
+    "ultima_actualizacion": "2025-01-20T18:00:00Z",
+    "version": "1.0.0"
+  },
+  "tipos_contrato": [
+    "INTERVENTORÍA",
+    "OBRA PÚBLICA",
+    "CONSULTORÍA",
+    "SUMINISTRO",
+    "PRESTACIÓN DE SERVICIOS"
+  ],
+  "estados_contrato": [
+    "ACTIVO",
+    "TERMINADO",
+    "SUSPENDIDO",
+    "EN_MODIFICACION"
+  ],
+  "tipos_modificacion": [
+    "PLAZO",
+    "VALOR",
+    "ALCANCE",
+    "OTRO"
+  ],
+  "roles_usuario": [
+    "admin",
+    "supervisor",
+    "jefe"
+  ]
+} 
