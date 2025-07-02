@@ -1,0 +1,38 @@
+import { apiClient } from './api';
+import { Usuario } from '@/context/AuthContext';
+
+export interface LoginCredentials {
+    email: string;
+    password: string;
+}
+
+export interface AuthResponse {
+    access_token: string;
+}
+
+export interface RegisterCredentials {
+    cedula: string,
+    email: string,
+    password: string,
+    rol: string,
+    nombre: string
+}
+
+export const authService = {
+    async login(credentials: LoginCredentials): Promise<AuthResponse> {
+        return apiClient.post('/auth/login', credentials);
+    },
+
+    async register(credentials: RegisterCredentials): Promise<void> {
+        return apiClient.post('/auth/register', credentials);
+    },
+
+    async getCurrentUser(token: string): Promise<Usuario> {
+        return apiClient.get('/usuarios/perfil/me', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    },
+
+};
