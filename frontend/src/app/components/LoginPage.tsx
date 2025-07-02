@@ -3,7 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import logoMedellin from '@/assets/logo-medellin.png';
+import { Work_Sans } from 'next/font/google';
+import logoMedellin from '@/assets/Logo-Medellin-new.png';
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['200', '400', '500', '600', '700', '800'],
+});
 
 // Importar el simulador de API directamente
 const usuariosSimulados = [
@@ -113,7 +119,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-300 via-cyan-400 to-blue-500 flex items-center justify-center p-4 relative overflow-hidden">
    
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="flex flex-col space-y-4 transform -rotate-0 translate-x-[-5%] translate-y-[0%] scale-[2]">
           {Array.from({ length: 12 }).map((_, rowIndex) => (
             <div key={rowIndex} className="flex space-x-8 whitespace-nowrap">
@@ -128,30 +134,34 @@ export default function LoginPage() {
       </div>
 
       
-      <div className="bg-blue-800 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+      <div className="bg-blue-900 rounded-2xl p-8 w-full max-w-md shadow-2xl">
         <div className="flex items-start space-x-4 mb-8">
-          <div className="bg-white rounded-lg p-4 flex-shrink-0 shadow-lg border">
+          <div className="bg-blue-900 rounded-lg p-2 shadow-lg">
             <Image
               src={logoMedellin}
               alt="Alcaldía de Medellín"
-              width={64}
-              height={80}
-              className="w-16 h-20 object-contain"
+              width={140}
+              height={120}
+              className="w-60 h-30 object-contain"
             />
           </div>
           
-          <div className="w-px h-20 bg-white opacity-50 mt-2"></div>
+          <div className="w-px h-28 bg-white opacity-50"></div>
           
           <div className="text-white">
-            <h1 className="text-xl font-bold leading-tight">
-              Sistema de Seguimiento de Contratos
+            <h1 
+              className={`${workSans.className} text-white align-middle`}
+              style={{
+                fontWeight: 500,
+                fontSize: '23px',
+                lineHeight: '100%',
+                letterSpacing: '0%',
+                verticalAlign: 'middle',
+                marginTop: '16px'
+              }}
+            >
+              SISTEMA DE SEGUIMIENTO DE CONTRATOS
             </h1>
-            <p className="text-sm text-blue-200 mt-1">
-              Alcaldía de Medellín
-            </p>
-            <p className="text-xs text-blue-300">
-              Ciencia, Tecnología e Innovación
-            </p>
           </div>
         </div>
 

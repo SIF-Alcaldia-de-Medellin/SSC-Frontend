@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import logoMedellin from '@/assets/logo-medellin.png';
+import { Work_Sans } from 'next/font/google';
+import logoMedellin from '@/assets/Logo-Medellin-new.png';
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+});
 
 // Datos del sistema SSC
 const sscData = {
@@ -254,12 +260,13 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-300 via-cyan-400 to-blue-500 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div className="flex flex-col space-y-8 transform -rotate-0 translate-x-[-10%] translate-y-[0%] scale-150">
-          {Array.from({ length: 8 }).map((_, rowIndex) => (
-            <div key={rowIndex} className="flex space-x-16 whitespace-nowrap">
-              {Array.from({ length: 6 }).map((_, colIndex) => (
-                <span key={colIndex} className="text-blue-900 text-4xl font-bold select-none">
+      {/* Fondo con patrón */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="flex flex-col space-y-4 transform -rotate-0 translate-x-[-5%] translate-y-[0%] scale-[2]">
+          {Array.from({ length: 12 }).map((_, rowIndex) => (
+            <div key={rowIndex} className="flex space-x-8 whitespace-nowrap">
+              {Array.from({ length: 8 }).map((_, colIndex) => (
+                <span key={colIndex} className="text-blue-900 text-5xl font-black select-none tracking-[-0.1em] font-sans">
                   {rowIndex % 2 === 0 ? 'MEDELLIN' : 'TE QUIERE'}
                 </span>
               ))}
@@ -268,7 +275,7 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
         </div>
       </div>
 
-      <header className="bg-blue-800 px-6 py-4 relative z-10">
+              <header className="bg-blue-900 px-6 py-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -281,22 +288,30 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
               <span>Regresar</span>
             </button>
             
-            <div className="bg-white rounded-lg p-3 shadow-lg">
+            <div className="bg-blue-900 rounded-lg p-2 shadow-lg">
               <Image
                 src={logoMedellin}
                 alt="Alcaldía de Medellín"
-                width={56}
-                height={70}
-                className="w-14 h-[4.5rem] object-contain"
+                width={96}
+                height={120}
+                className="w-24 h-30 object-contain"
               />
             </div>
             
-            <div className="w-px h-12 bg-white opacity-50"></div>
+            <div className="w-px h-20 bg-white opacity-50"></div>
             
             <div className="text-white">
-              <h1 className="text-5xl font-bold">SIF</h1>
-              <p className="text-sm text-blue-200">Alcaldía de Medellín</p>
-              <p className="text-xs text-blue-300">Ciencia, Tecnología e Innovación</p>
+              <h1 
+                className={`${workSans.className} text-white`}
+                style={{
+                  fontWeight: 800,
+                  fontSize: '95.37px',
+                  lineHeight: '100%',
+                  letterSpacing: '0%'
+                }}
+              >
+                SIF
+              </h1>
             </div>
           </div>
 
@@ -321,8 +336,17 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
           {/* Header del contrato */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-purple-600 mb-2">
-                {contrato.CON_IDENTIFICADOR_SIMPLE}
+              <h2 
+                className={`${workSans.className} text-purple-600 mb-2 align-middle`}
+                style={{
+                  fontWeight: 800,
+                  fontSize: '61.04px',
+                  lineHeight: '100%',
+                  letterSpacing: '0%',
+                  verticalAlign: 'middle'
+                }}
+              >
+                Contrato {contrato.CON_IDENTIFICADOR_SIMPLE}
               </h2>
               <p className="text-gray-600">Contrato No. {contrato.CON_NRO_CONTRATO} - {contrato.CON_ANO_SUSCRIPCION}</p>
             </div>
@@ -337,25 +361,111 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div className="lg:col-span-2">
               <div className="mb-4">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">Objeto:</h3>
-                <p className="text-gray-800 text-sm leading-relaxed">
+                <h3 
+                  className={`${workSans.className} text-purple-700 mb-2 align-middle`}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: '31.25px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    textAlign: 'left',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  Objeto:
+                </h3>
+                <p 
+                  className={`${workSans.className} text-gray-800 align-middle`}
+                  style={{
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    verticalAlign: 'middle'
+                  }}
+                >
                   {contrato.CON_OBJETO}
                 </p>
               </div>
               <div className="mb-4">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">Contratista:</h3>
-                <p className="text-gray-800 font-medium">
+                <h3 
+                  className={`${workSans.className} text-purple-700 mb-2 align-middle`}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: '31.25px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    textAlign: 'left',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  Contratista:
+                </h3>
+                <p 
+                  className={`${workSans.className} text-gray-800 align-middle`}
+                  style={{
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    verticalAlign: 'middle'
+                  }}
+                >
                   {contrato.CON_CONTRATISTA}
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-600 mb-1">Supervisor Técnico:</h3>
-                  <p className="text-sm text-gray-700">{contrato.CON_SUPERVISOR_TECNICO}</p>
+                  <h3 
+                    className={`${workSans.className} text-purple-700 mb-1 align-middle`}
+                    style={{
+                      fontWeight: 700,
+                      fontSize: '31.25px',
+                      lineHeight: '100%',
+                      letterSpacing: '0%',
+                      textAlign: 'left',
+                      verticalAlign: 'middle'
+                    }}
+                  >
+                    Supervisor Técnico:
+                  </h3>
+                  <p 
+                    className={`${workSans.className} text-gray-700 align-middle`}
+                    style={{
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '100%',
+                      letterSpacing: '0%',
+                      verticalAlign: 'middle'
+                    }}
+                  >
+                    {contrato.CON_SUPERVISOR_TECNICO}
+                  </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-600 mb-1">Estado:</h3>
-                  <span className="inline-block bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
+                                      <h3 
+                      className={`${workSans.className} text-purple-700 mb-1 align-middle`}
+                      style={{
+                        fontWeight: 700,
+                        fontSize: '31.25px',
+                        lineHeight: '100%',
+                        letterSpacing: '0%',
+                        textAlign: 'left',
+                        verticalAlign: 'middle'
+                      }}
+                    >
+                      Estado:
+                    </h3>
+                  <span 
+                    className={`${workSans.className} inline-block bg-green-100 text-green-800 px-2 py-1 rounded align-middle`}
+                    style={{
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '100%',
+                      letterSpacing: '0%',
+                      verticalAlign: 'middle'
+                    }}
+                  >
                     {contrato.CON_ESTADO}
                   </span>
                 </div>
@@ -364,16 +474,63 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
             
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">Valor Inicial:</h3>
+                <h3 
+                  className={`${workSans.className} text-purple-700 mb-1 align-middle`}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: '31.25px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    textAlign: 'left',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  Valor Inicial:
+                </h3>
                 <p className="text-lg font-bold text-gray-800">{formatearValor(contrato.CON_VALOR_INI)}</p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">Valor Total:</h3>
-                <p className="text-xl font-bold text-green-600">{formatearValor(contrato.CON_VALOR_TOTAL)}</p>
+                <h3 
+                  className={`${workSans.className} text-purple-700 mb-1 align-middle`}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: '31.25px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    textAlign: 'left',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  Valor Total:
+                </h3>
+                <p className="text-xl font-bold text-gray-800">{formatearValor(contrato.CON_VALOR_TOTAL)}</p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">Fecha de Finalización:</h3>
-                <p className="text-lg font-medium text-gray-800">{formatearFecha(contrato.CON_FECHA_TER_ACT)}</p>
+                <h3 
+                  className={`${workSans.className} text-purple-700 mb-1 align-middle`}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: '31.25px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    textAlign: 'left',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  Fecha de Finalización:
+                </h3>
+                <p 
+                  className={`${workSans.className} text-gray-800 align-middle`}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: '31.25px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  {formatearFecha(contrato.CON_FECHA_TER_ACT)}
+                </p>
               </div>
             </div>
           </div>
@@ -384,29 +541,87 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Adiciones */}
             <div>
-              <h3 className="text-xl font-bold text-cyan-600 mb-4">Adiciones</h3>
+              <h3 
+                className={`${workSans.className} text-sky-600 mb-4 align-middle`}
+                style={{
+                  fontWeight: 700,
+                  fontSize: '31.25px',
+                  lineHeight: '100%',
+                  letterSpacing: '0%',
+                  textAlign: 'center',
+                  verticalAlign: 'middle'
+                }}
+              >
+                Adiciones
+              </h3>
               
-              <div className="bg-gray-50 rounded-lg overflow-hidden">
+              <div className="bg-sky-50 rounded-lg overflow-hidden border border-sky-200">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-cyan-500 text-white">
-                      <th className="px-4 py-3 text-left text-sm font-medium">Fecha</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium">Valor</th>
+                    <tr className="bg-sky-600 text-white">
+                      <th 
+                        className={`${workSans.className} px-4 py-3 text-white align-middle`}
+                        style={{
+                          fontWeight: 600,
+                          fontSize: '25px',
+                          lineHeight: '100%',
+                          letterSpacing: '0%',
+                          textAlign: 'center',
+                          verticalAlign: 'middle'
+                        }}
+                      >
+                        Fecha
+                      </th>
+                      <th 
+                        className={`${workSans.className} px-4 py-3 text-white align-middle`}
+                        style={{
+                          fontWeight: 600,
+                          fontSize: '25px',
+                          lineHeight: '100%',
+                          letterSpacing: '0%',
+                          textAlign: 'center',
+                          verticalAlign: 'middle'
+                        }}
+                      >
+                        Valor
+                      </th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="bg-sky-50">
                     {adiciones.length > 0 ? (
                       adiciones.map((adicion, index) => (
-                        <tr key={index} className="border-b border-gray-200">
-                          <td className="px-4 py-3 text-sm">{formatearFecha(adicion.ADI_FECHA)}</td>
-                          <td className="px-4 py-3 text-sm font-medium text-green-600">
+                        <tr key={index} className="border-b border-sky-200 hover:bg-sky-100 transition-colors">
+                          <td 
+                            className={`${workSans.className} px-4 py-3 text-sky-800 align-middle`}
+                            style={{
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '100%',
+                              letterSpacing: '0%',
+                              textAlign: 'center',
+                              verticalAlign: 'middle'
+                            }}
+                          >
+                            {formatearFecha(adicion.ADI_FECHA)}
+                          </td>
+                          <td 
+                            className={`${workSans.className} px-4 py-3 text-sky-800 align-middle`}
+                            style={{
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '100%',
+                              letterSpacing: '0%',
+                              textAlign: 'center',
+                              verticalAlign: 'middle'
+                            }}
+                          >
                             {formatearValor(adicion.ADI_VALOR_ADICION)}
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={2} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={2} className="px-4 py-8 text-center text-sky-600 font-medium">
                           No hay adiciones registradas
                         </td>
                       </tr>
@@ -418,36 +633,105 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
               <div className="mt-4 text-center">
                 <button 
                   onClick={() => router.push(`/agregar-adicion?contrato=${contrato.CON_ID}`)}
-                  className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                  className={`${workSans.className} bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-full transition-colors flex items-center space-x-2 mx-auto align-middle`}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: '16px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    textAlign: 'center',
+                    verticalAlign: 'middle'
+                  }}
                 >
-                  + Agregar Adición
+                  <span>+</span>
+                  <span>Agregar Adición</span>
                 </button>
               </div>
             </div>
 
             {/* Modificaciones */}
             <div>
-              <h3 className="text-xl font-bold text-blue-600 mb-4">Modificaciones</h3>
+              <h3 
+                className={`${workSans.className} text-blue-900 mb-4 align-middle`}
+                style={{
+                  fontWeight: 700,
+                  fontSize: '31.25px',
+                  lineHeight: '100%',
+                  letterSpacing: '0%',
+                  textAlign: 'center',
+                  verticalAlign: 'middle'
+                }}
+              >
+                Modificaciones
+              </h3>
               
-              <div className="bg-gray-50 rounded-lg overflow-hidden">
+              <div className="bg-blue-50 rounded-lg overflow-hidden border border-blue-200">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-blue-500 text-white">
-                      <th className="px-4 py-3 text-left text-sm font-medium">Tipo</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium">Duración</th>
+                    <tr className="bg-blue-900 text-white">
+                      <th 
+                        className={`${workSans.className} px-4 py-3 text-white align-middle`}
+                        style={{
+                          fontWeight: 600,
+                          fontSize: '25px',
+                          lineHeight: '100%',
+                          letterSpacing: '0%',
+                          textAlign: 'center',
+                          verticalAlign: 'middle'
+                        }}
+                      >
+                        Tipo
+                      </th>
+                      <th 
+                        className={`${workSans.className} px-4 py-3 text-white align-middle`}
+                        style={{
+                          fontWeight: 600,
+                          fontSize: '25px',
+                          lineHeight: '100%',
+                          letterSpacing: '0%',
+                          textAlign: 'center',
+                          verticalAlign: 'middle'
+                        }}
+                      >
+                        Duración
+                      </th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="bg-blue-50">
                     {modificaciones.length > 0 ? (
                       modificaciones.map((modificacion, index) => (
-                        <tr key={index} className="border-b border-gray-200">
-                          <td className="px-4 py-3 text-sm font-medium">{modificacion.MOD_TIPO}</td>
-                          <td className="px-4 py-3 text-sm">{modificacion.MOD_DURACION} días</td>
+                        <tr key={index} className="border-b border-blue-200 hover:bg-blue-100 transition-colors">
+                          <td 
+                            className={`${workSans.className} px-4 py-3 text-blue-900 align-middle`}
+                            style={{
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '100%',
+                              letterSpacing: '0%',
+                              textAlign: 'center',
+                              verticalAlign: 'middle'
+                            }}
+                          >
+                            {modificacion.MOD_TIPO}
+                          </td>
+                          <td 
+                            className={`${workSans.className} px-4 py-3 text-blue-800 align-middle`}
+                            style={{
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '100%',
+                              letterSpacing: '0%',
+                              textAlign: 'center',
+                              verticalAlign: 'middle'
+                            }}
+                          >
+                            {modificacion.MOD_DURACION} días
+                          </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={2} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={2} className="px-4 py-8 text-center text-blue-600 font-medium">
                           No hay modificaciones registradas
                         </td>
                       </tr>
@@ -459,9 +743,18 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
               <div className="mt-4 text-center">
                 <button 
                   onClick={() => router.push(`/agregar-modificacion?contrato=${contrato.CON_ID}`)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                  className={`${workSans.className} bg-blue-900 hover:bg-blue-950 text-white px-6 py-2 rounded-full transition-colors flex items-center space-x-2 mx-auto align-middle`}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: '16px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    textAlign: 'center',
+                    verticalAlign: 'middle'
+                  }}
                 >
-                  + Agregar Modificación
+                  <span>+</span>
+                  <span>Agregar Modificación</span>
                 </button>
               </div>
             </div>
@@ -470,8 +763,20 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
           {/* Estadísticas del proyecto */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="text-center">
-              <h4 className="text-sm text-gray-600 mb-2">Costo total de obra ejecutada:</h4>
-              <p className="text-4xl font-bold text-green-600">
+              <h4 
+                className={`${workSans.className} text-gray-900 mb-2 align-middle`}
+                style={{
+                  fontWeight: 700,
+                  fontSize: '25px',
+                  lineHeight: '100%',
+                  letterSpacing: '0%',
+                  textAlign: 'center',
+                  verticalAlign: 'middle'
+                }}
+              >
+                Costo total de obra ejecutada:
+              </h4>
+              <p className="font-bold text-green-600" style={{fontSize: '75.37px'}}>
                 {seguimiento ? formatearValor(calcularCostoEjecutado()) : formatearValor(0)}
               </p>
               <p className="text-sm text-gray-500 mt-1">
@@ -479,8 +784,20 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
               </p>
             </div>
             <div className="text-center">
-              <h4 className="text-sm text-gray-600 mb-2">Total de obra ejecutada:</h4>
-              <p className="text-4xl font-bold text-orange-500">
+              <h4 
+                className={`${workSans.className} text-gray-900 mb-2 align-middle`}
+                style={{
+                  fontWeight: 700,
+                  fontSize: '25px',
+                  lineHeight: '100%',
+                  letterSpacing: '0%',
+                  textAlign: 'center',
+                  verticalAlign: 'middle'
+                }}
+              >
+                Total de obra ejecutada:
+              </h4>
+              <p className="font-bold text-orange-500" style={{fontSize: '75.37px'}}>
                 {seguimiento ? `${seguimiento.SEG_AVANCE_FISICO}%` : '0%'}
               </p>
               <p className="text-sm text-gray-500 mt-1">Avance físico del proyecto</p>
@@ -530,7 +847,15 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button 
               onClick={() => router.push(`/seguimiento-general?contrato=${contrato.CON_ID}`)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
+              className={`${workSans.className} bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full transition-colors flex items-center justify-center space-x-2 align-middle`}
+              style={{
+                fontWeight: 700,
+                fontSize: '25px',
+                lineHeight: '100%',
+                letterSpacing: '0%',
+                textAlign: 'center',
+                verticalAlign: 'middle'
+              }}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -540,7 +865,15 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
             
             <button 
               onClick={() => router.push(`/seguimiento-actividades?contrato=${contrato.CON_ID}`)}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
+              className={`${workSans.className} bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full transition-colors flex items-center justify-center space-x-2 align-middle`}
+              style={{
+                fontWeight: 700,
+                fontSize: '25px',
+                lineHeight: '100%',
+                letterSpacing: '0%',
+                textAlign: 'center',
+                verticalAlign: 'middle'
+              }}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />

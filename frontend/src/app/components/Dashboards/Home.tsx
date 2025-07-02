@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import logoMedellin from '@/assets/logo-medellin.png';
+import { Work_Sans } from 'next/font/google';
+import logoMedellin from '@/assets/Logo-Medellin-new.png';
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+});
 
 // Datos del sistema SSC
 const sscData = {
@@ -139,12 +145,13 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-300 via-cyan-400 to-blue-500 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div className="flex flex-col space-y-8 transform -rotate-0 translate-x-[-10%] translate-y-[0%] scale-150">
-          {Array.from({ length: 8 }).map((_, rowIndex) => (
-            <div key={rowIndex} className="flex space-x-16 whitespace-nowrap">
-              {Array.from({ length: 6 }).map((_, colIndex) => (
-                <span key={colIndex} className="text-blue-900 text-4xl font-bold select-none">
+      {/* Fondo con patrón */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="flex flex-col space-y-4 transform -rotate-0 translate-x-[-5%] translate-y-[0%] scale-[2]">
+          {Array.from({ length: 12 }).map((_, rowIndex) => (
+            <div key={rowIndex} className="flex space-x-8 whitespace-nowrap">
+              {Array.from({ length: 8 }).map((_, colIndex) => (
+                <span key={colIndex} className="text-blue-900 text-5xl font-black select-none tracking-[-0.1em] font-sans">
                   {rowIndex % 2 === 0 ? 'MEDELLIN' : 'TE QUIERE'}
                 </span>
               ))}
@@ -153,25 +160,33 @@ export default function HomePage() {
         </div>
       </div>
 
-      <header className="bg-blue-800 px-6 py-4 relative z-10">
+      <header className="bg-blue-900 px-6 py-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="bg-white rounded-lg p-3 shadow-lg">
+            <div className="bg-blue-900 rounded-lg p-2 shadow-lg">
               <Image
                 src={logoMedellin}
                 alt="Alcaldía de Medellín"
-                width={56}
-                height={70}
-                className="w-14 h-[4.5rem] object-contain"
+                width={96}
+                height={120}
+                className="w-24 h-30 object-contain"
               />
             </div>
             
-            <div className="w-px h-12 bg-white opacity-50"></div>
+            <div className="w-px h-20 bg-white opacity-50"></div>
             
             <div className="text-white">
-              <h1 className="text-5xl font-bold">SIF</h1>
-              <p className="text-sm text-blue-200">Alcaldía de Medellín</p>
-              <p className="text-xs text-blue-300">Ciencia, Tecnología e Innovación</p>
+              <h1 
+                className={`${workSans.className} text-white`}
+                style={{
+                  fontWeight: 800,
+                  fontSize: '95.37px',
+                  lineHeight: '100%',
+                  letterSpacing: '0%'
+                }}
+              >
+                SIF
+              </h1>
             </div>
           </div>
 
@@ -182,7 +197,7 @@ export default function HomePage() {
             </div>
             <button
               onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg flex items-center space-x-2 transition-colors duration-200 text-sm"
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-full flex items-center space-x-2 transition-colors duration-200 text-sm"
             >
               <span>Cerrar Sesión</span>
               <span className="text-base">⊗</span>
@@ -193,7 +208,17 @@ export default function HomePage() {
 
       <main className="px-8 py-8 relative z-10">
         <div className="bg-white rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-4xl font-bold text-gray-800 text-center mb-8">
+          <h2 
+            className={`${workSans.className} text-gray-800 text-center mb-8 align-middle`}
+            style={{
+              fontWeight: 700,
+              fontSize: '48.83px',
+              lineHeight: '100%',
+              letterSpacing: '0%',
+              textAlign: 'center',
+              verticalAlign: 'middle'
+            }}
+          >
             ¿Que <span className="text-blue-600">contrato</span> deseas realizarle seguimiento?
           </h2>
           
@@ -208,65 +233,62 @@ export default function HomePage() {
             </div>
           ) : contratos.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {contratos.map((contrato) => (
+              {contratos.map((contrato, index) => (
                 <div 
                   key={contrato.CON_ID}
                   onClick={() => handleContratoClick(contrato.CON_ID)}
-                  className="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-200 cursor-pointer group"
+                  className={`${index % 2 === 0 ? 'bg-orange-500' : 'bg-green-500'} text-white rounded-lg p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer group h-96 flex flex-col justify-between`}
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                      {contrato.CON_TIPO_CONTRATO}
+                  <div className="flex-grow">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        {contrato.CON_TIPO_CONTRATO}
+                      </div>
+                      <div className="text-white bg-green-600 px-2 py-1 rounded text-xs font-medium">
+                        {contrato.CON_ESTADO}
+                      </div>
                     </div>
-                    <div className="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-medium">
-                      {contrato.CON_ESTADO}
+
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gray-100 transition-colors">
+                      Contrato {contrato.CON_IDENTIFICADOR_SIMPLE}
+                    </h3>
+                    
+                    <p className="text-white text-sm mb-3 opacity-90 line-clamp-2 h-10 overflow-hidden">
+                      {contrato.CON_OBJETO}
+                    </p>
+
+                    <div className="space-y-2 text-sm text-white">
+                      <div className="flex justify-between">
+                        <span className="text-white opacity-80">Contratista:</span>
+                        <span className="font-medium text-right text-xs max-w-[60%] truncate">
+                          {contrato.CON_CONTRATISTA}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-white opacity-80">Valor:</span>
+                        <span className="font-bold text-white">
+                          {formatearValor(contrato.CON_VALOR_TOTAL)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-white opacity-80">Programa:</span>
+                        <span className="font-medium text-right text-xs max-w-[60%] truncate">
+                          {contrato.CON_PROGRAMA}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-white opacity-80">Inicio:</span>
+                        <span className="font-medium">
+                          {formatearFecha(contrato.CON_FECHA_INI)}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
-                    {contrato.CON_IDENTIFICADOR_SIMPLE}
-                  </h3>
-                  
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-3">
-                    {contrato.CON_OBJETO}
-                  </p>
-
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Contratista:</span>
-                      <span className="font-medium text-right text-xs max-w-[60%]">
-                        {contrato.CON_CONTRATISTA}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Valor:</span>
-                      <span className="font-medium text-green-600">
-                        {formatearValor(contrato.CON_VALOR_TOTAL)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Programa:</span>
-                      <span className="font-medium text-right text-xs max-w-[60%]">
-                        {contrato.CON_PROGRAMA}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Inicio:</span>
-                      <span className="font-medium">
-                        {formatearFecha(contrato.CON_FECHA_INI)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-blue-600 font-medium group-hover:text-blue-700">
-                        Ver detalles →
-                      </span>
-                      <span className="text-gray-400">
-                        #{contrato.CON_NRO_CONTRATO}
-                      </span>
-                    </div>
+                  <div className="mt-6 pt-4 border-t border-white border-opacity-30">
+                    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-full font-medium transition-colors">
+                      Seleccionar
+                    </button>
                   </div>
                 </div>
               ))}
