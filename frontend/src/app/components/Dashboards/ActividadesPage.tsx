@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { Work_Sans } from 'next/font/google';
 import SeguimientoAvance from './SeguimientoAvance';
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+});
 
 // Datos del sistema SSC
 const sscData = {
@@ -97,30 +103,93 @@ export default function ActividadesPage({ cuoId }: ActividadesPageProps) {
     <div className="space-y-4">
       {!selectedActivity ? (
         <div>
-          <h2 className="text-4xl font-bold text-gray-800 text-center mb-8">
+          <h2 
+            className={`${workSans.className} text-gray-800 text-center mb-8 align-middle`}
+            style={{
+              fontWeight: 700,
+              fontSize: '48.83px',
+              lineHeight: '100%',
+              letterSpacing: '0%',
+              textAlign: 'center',
+              verticalAlign: 'middle'
+            }}
+          >
             ¿Qué <span className="text-fuchsia-600">actividad</span> deseas seguir?
           </h2>
 
           {actividades.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {actividades.map((actividad) => (
-                <div key={actividad.ACT_ID} className="bg-cyan-600 text-white rounded-xl p-6 shadow-lg space-y-2">
-                  <h3 className="text-xl font-bold">ACT #{actividad.ACT_ID}</h3>
-                  <p className="text-lg">{actividad.ACT_ACTIVIDAD}</p>
-                  <p className="text-sm text-white/80">
-                    Meta física: {actividad.ACT_METAFISICA} {actividad.ACT_UNIDADES_AVANCE}
-                  </p>
-                  <p className="font-semibold text-white">
-                    Valor: {formatearValor(actividad.ACT_PROYECTADO_FINANCIERO)}
-                  </p>
-                  <button
-                    onClick={() => setSelectedActivity(actividad)}
-                    className="bg-fuchsia-700 hover:bg-fuchsia-800 text-white font-semibold px-4 py-2 rounded-lg w-full"
-                  >
-                    Seleccionar
-                  </button>
-                </div>
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {actividades.map((actividad, index) => {
+                const isDarkBlue = index % 2 === 0;
+                const bgColor = isDarkBlue ? 'bg-blue-400' : 'bg-sky-500';
+                const hoverColor = isDarkBlue ? 'hover:bg-blue-500' : 'hover:bg-sky-600';
+                
+                return (
+                                     <div key={actividad.ACT_ID} className={`${bgColor} ${hoverColor} text-white rounded-2xl p-8 shadow-xl transition-all duration-300 transform hover:scale-105 h-96 flex flex-col justify-between`}>
+                                          <div className="flex-1 flex flex-col">
+                        <div>
+                          <h3 
+                            className={`${workSans.className} text-left mb-4 align-middle`}
+                            style={{
+                              fontWeight: 700,
+                              fontSize: '31.25px',
+                              lineHeight: '100%',
+                              letterSpacing: '0%',
+                              verticalAlign: 'middle'
+                            }}
+                          >
+                            ACT #{actividad.ACT_ID}
+                          </h3>
+                          <h4 
+                            className={`${workSans.className} text-left mb-4 align-middle`}
+                            style={{
+                              fontWeight: 600,
+                              fontSize: '25px',
+                              lineHeight: '100%',
+                              letterSpacing: '0%',
+                              verticalAlign: 'middle'
+                            }}
+                          >
+                            {actividad.ACT_ACTIVIDAD}
+                          </h4>
+                          <p 
+                            className={`${workSans.className} text-left mb-2 align-middle`}
+                            style={{
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '100%',
+                              letterSpacing: '0%',
+                              verticalAlign: 'middle'
+                            }}
+                          >
+                            <span className="font-medium">Meta física:</span> {actividad.ACT_METAFISICA} {actividad.ACT_UNIDADES_AVANCE}
+                          </p>
+                        </div>
+                        <div className="flex-1 flex items-end">
+                          <p 
+                            className={`${workSans.className} align-middle w-full`}
+                            style={{
+                              fontWeight: 600,
+                              fontSize: '28px',
+                              lineHeight: '100%',
+                              letterSpacing: '0%',
+                              textAlign: 'right',
+                              verticalAlign: 'middle'
+                            }}
+                          >
+                            <span className="font-medium">Valor proyectado:</span> {formatearValor(actividad.ACT_PROYECTADO_FINANCIERO)}
+                          </p>
+                        </div>
+                     </div>
+                                            <button
+                         onClick={() => setSelectedActivity(actividad)}
+                         className="bg-purple-500 hover:bg-purple-600 text-white font-bold px-6 py-3 rounded-full w-full mt-6 transition-colors duration-200 shadow-lg"
+                       >
+                         Seleccionar
+                       </button>
+                   </div>
+                );
+              })}
             </div>
           ) : (
             <EmptyState />
@@ -130,7 +199,7 @@ export default function ActividadesPage({ cuoId }: ActividadesPageProps) {
         <div className="space-y-4">
           <button
             onClick={() => setSelectedActivity(null)}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
+            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-full flex items-center space-x-2 transition-colors duration-200"
           >
             <span>←</span>
             <span>Volver a Actividades</span>

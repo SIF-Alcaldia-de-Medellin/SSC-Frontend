@@ -1,6 +1,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { Work_Sans } from 'next/font/google';
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+});
 
 // Datos del sistema SSC
 const sscData = {
@@ -169,7 +175,7 @@ export default function SeguimientoAvance({
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-4xl mx-auto">
+      <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-4xl mx-auto">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded mb-6"></div>
           <div className="grid grid-cols-2 gap-8">
@@ -187,9 +193,19 @@ export default function SeguimientoAvance({
     );
   }
 
-  return (
-    <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
+     return (
+     <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-4xl mx-auto">
+      <h2 
+        className={`${workSans.className} text-gray-800 text-center mb-6 align-middle`}
+        style={{
+          fontWeight: 700,
+          fontSize: '48.83px',
+          lineHeight: '100%',
+          letterSpacing: '0%',
+          textAlign: 'center',
+          verticalAlign: 'middle'
+        }}
+      >
         Seguimiento de Avance Físico por Actividad
         {nombreActividad && (
           <span className="block text-lg text-blue-600 mt-1">{nombreActividad}</span>
@@ -206,89 +222,163 @@ export default function SeguimientoAvance({
         <div className="grid grid-cols-2 gap-8">
           {/* Costos */}
           <div className="border-r pr-8">
-            <h3 className="text-center text-lg font-semibold text-gray-700 mb-2">Costos</h3>
-            <p className="text-center text-sm text-gray-600 mb-1">Acumulado:</p>
-            <p className="text-center text-3xl font-bold text-green-600">
+            <h3 
+              className={`${workSans.className} text-green-700 mb-2 align-middle`}
+              style={{
+                fontWeight: 600,
+                fontSize: '31.25px',
+                lineHeight: '100%',
+                letterSpacing: '0%',
+                textAlign: 'center',
+                verticalAlign: 'middle'
+              }}
+            >
+              Costos
+              <br />
+              Acumulado:
+            </h3>
+            <p className="text-center text-4xl font-bold text-green-600 mb-4">
               ${costoAcumulado}
             </p>
-            <p className="text-center text-xs text-gray-500 mt-1">*Datos de base de datos</p>
-            {costoTotal !== "0" && (
-              <p className="text-center text-sm text-gray-500 mt-2">
-                Total proyecto: ${costoTotal}
-              </p>
-            )}
+            
+            <div className="border-t border-gray-300 pt-4">
+                             <label 
+                 className={`${workSans.className} block text-gray-700 mb-2 align-middle`}
+                 style={{
+                   fontWeight: 600,
+                   fontSize: '20px',
+                   lineHeight: '100%',
+                   letterSpacing: '0%',
+                   textAlign: 'center',
+                   verticalAlign: 'middle'
+                 }}
+               >
+                 <span className="text-red-600 text-xl font-bold">*</span>Costo aproximado
+               </label>
+                             <input
+                 type="number"
+                 placeholder="0"
+                 className="w-full px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-green-500 focus:border-transparent text-center"
+               />
+            </div>
           </div>
 
           {/* Avance Físico */}
           <div className="pl-8">
-            <h3 className="text-center text-lg font-semibold text-gray-700 mb-2">Avance Físico</h3>
-            <p className="text-center text-sm text-gray-600 mb-1">Acumulado:</p>
-            <p className="text-center text-3xl font-bold text-orange-500">
-              {avanceFisico}%
+            <h3 
+              className={`${workSans.className} text-orange-700 mb-2 align-middle`}
+              style={{
+                fontWeight: 600,
+                fontSize: '31.25px',
+                lineHeight: '100%',
+                letterSpacing: '0%',
+                textAlign: 'center',
+                verticalAlign: 'middle'
+              }}
+            >
+              Avance Físico
+              <br />
+              Acumulado:
+            </h3>
+            <p className="text-center text-4xl font-bold text-orange-600 mb-4">
+              {avanceFisico}m
             </p>
-            <p className="text-center text-xs text-gray-500 mt-1">*Datos de base de datos</p>
             
-            <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
-              <div 
-                className="bg-orange-500 h-2 rounded-full transition-all duration-300" 
-                style={{ width: `${avanceFisico}%` }}
-              ></div>
+            <div className="border-t border-gray-300 pt-4">
+                             <label 
+                 className={`${workSans.className} block text-gray-700 mb-2 align-middle`}
+                 style={{
+                   fontWeight: 600,
+                   fontSize: '20px',
+                   lineHeight: '100%',
+                   letterSpacing: '0%',
+                   textAlign: 'center',
+                   verticalAlign: 'middle'
+                 }}
+               >
+                 <span className="text-red-600 text-xl font-bold">*</span>Avance Físico
+               </label>
+                             <input
+                 type="number"
+                 placeholder="0"
+                 className="w-full px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-orange-500 focus:border-transparent text-center"
+               />
             </div>
           </div>
         </div>
 
         {/* Descripción */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            *Descripción del Seguimiento:
-          </label>
-          <textarea
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            rows={4}
-            required
-            placeholder="Describe el estado actual y observaciones del seguimiento..."
-          />
+                 <div className="space-y-2">
+           <label 
+             className={`${workSans.className} block text-gray-700 mb-2 align-middle`}
+             style={{
+               fontWeight: 600,
+               fontSize: '20px',
+               lineHeight: '100%',
+               letterSpacing: '0%',
+               textAlign: 'left',
+               verticalAlign: 'middle'
+             }}
+           >
+             <span className="text-red-600 text-xl font-bold">*</span>Descripción del Seguimiento:
+           </label>
+                     <textarea
+             value={descripcion}
+             onChange={(e) => setDescripcion(e.target.value)}
+             className="w-full p-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+             rows={4}
+             required
+             placeholder="Describe el estado actual y observaciones del seguimiento..."
+           />
         </div>
 
         {/* Actividades Proyectadas */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            *Actividades Proyectadas:
-          </label>
-          <textarea
-            value={actividadesProyectadas}
-            onChange={(e) => setActividadesProyectadas(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            rows={4}
-            required
-            placeholder="Describe las actividades planificadas para el próximo período..."
-          />
+                 <div className="space-y-2">
+           <label 
+             className={`${workSans.className} block text-gray-700 mb-2 align-middle`}
+             style={{
+               fontWeight: 600,
+               fontSize: '20px',
+               lineHeight: '100%',
+               letterSpacing: '0%',
+               textAlign: 'left',
+               verticalAlign: 'middle'
+             }}
+           >
+             <span className="text-red-600 text-xl font-bold">*</span>Actividades Proyectadas:
+           </label>
+                     <textarea
+             value={actividadesProyectadas}
+             onChange={(e) => setActividadesProyectadas(e.target.value)}
+             className="w-full p-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+             rows={4}
+             required
+             placeholder="Describe las actividades planificadas para el próximo período..."
+           />
         </div>
 
         {/* Botones */}
         <div className="flex justify-between">
-          {onBackToActividades && (
-            <button
-              type="button"
-              onClick={onBackToActividades}
-              className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-6 py-2 rounded-lg transition-colors duration-200"
-            >
-              Volver a Actividades
-            </button>
-          )}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`font-semibold px-6 py-2 rounded-lg transition-colors duration-200 ml-auto ${
-              isSubmitting 
-                ? "bg-gray-400 cursor-not-allowed" 
-                : "bg-blue-600 hover:bg-blue-700"
-            } text-white`}
-          >
-            {isSubmitting ? "Guardando..." : "Enviar"}
-          </button>
+                     {onBackToActividades && (
+             <button
+               type="button"
+               onClick={onBackToActividades}
+               className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-6 py-2 rounded-full transition-colors duration-200"
+             >
+               Volver a Actividades
+             </button>
+           )}
+           <button
+             type="submit"
+             disabled={isSubmitting}
+             className={`font-semibold px-6 py-2 rounded-full transition-colors duration-200 ml-auto ${
+               isSubmitting 
+                 ? "bg-gray-400 cursor-not-allowed" 
+                 : "bg-blue-600 hover:bg-blue-700"
+             } text-white`}
+           >
+             {isSubmitting ? "Guardando..." : "Enviar"}
+           </button>
         </div>
       </form>
     </div>

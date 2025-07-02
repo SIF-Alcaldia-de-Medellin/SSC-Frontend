@@ -1,8 +1,15 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import logoMedellin from '@/assets/logo-medellin.png';
+import { Work_Sans } from 'next/font/google';
+import logoMedellin from '@/assets/Logo-Medellin-new.png';
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+});
 
 interface AgregarModificacionPageProps {
   onBackToHome?: () => void;
@@ -10,6 +17,9 @@ interface AgregarModificacionPageProps {
 
 export default function AgregarModificacionPage({ onBackToHome }: AgregarModificacionPageProps = {}) {
   const [userRole] = useState('supervisor');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const contratoId = searchParams.get('contrato');
   const [formData, setFormData] = useState({
     tipoModificacion: '',
     fechasInicio: '2025-06-24',
@@ -18,12 +28,25 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
   });
 
   const handleLogout = () => {
-    console.log('Cerrando sesión...');
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    router.push('/');
   };
 
   const handleBackToHome = () => {
     if (onBackToHome) {
       onBackToHome();
+    } else if (contratoId) {
+      // Regresar al contrato específico
+      router.push(`/contratos?id=${contratoId}`);
+    } else {
+      // Intentar obtener el último contrato visitado o ir a home
+      const lastContractId = localStorage.getItem('lastContractId');
+      if (lastContractId) {
+        router.push(`/contratos?id=${lastContractId}`);
+      } else {
+        router.push('/home');
+      }
     }
   };
 
@@ -37,17 +60,33 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Datos de la modificación:', formData);
+    
+    // Validaciones básicas
+    if (!formData.tipoModificacion || !formData.fechasInicio || !formData.fechasFinal) {
+      alert('Por favor complete todos los campos obligatorios');
+      return;
+    }
+
+    // Simular guardado de modificación
+    console.log('Guardando modificación:', {
+      contratoId,
+      ...formData
+    });
+
+    // Mostrar confirmación y regresar al contrato
+    alert('Modificación guardada exitosamente');
+    handleBackToHome();
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-300 via-cyan-400 to-blue-500 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div className="flex flex-col space-y-8 transform -rotate-0 translate-x-[-10%] translate-y-[0%] scale-150">
-          {Array.from({ length: 8 }).map((_, rowIndex) => (
-            <div key={rowIndex} className="flex space-x-16 whitespace-nowrap">
-              {Array.from({ length: 6 }).map((_, colIndex) => (
-                <span key={colIndex} className="text-blue-900 text-4xl font-bold select-none">
+      {/* Fondo con patrón */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="flex flex-col space-y-4 transform -rotate-0 translate-x-[-5%] translate-y-[0%] scale-[2]">
+          {Array.from({ length: 12 }).map((_, rowIndex) => (
+            <div key={rowIndex} className="flex space-x-8 whitespace-nowrap">
+              {Array.from({ length: 8 }).map((_, colIndex) => (
+                <span key={colIndex} className="text-blue-900 text-5xl font-black select-none tracking-[-0.1em] font-sans">
                   {rowIndex % 2 === 0 ? 'MEDELLIN' : 'TE QUIERE'}
                 </span>
               ))}
@@ -56,7 +95,8 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
         </div>
       </div>
 
-      <header className="bg-blue-800 px-6 py-4 relative z-10">
+
+              <header className="bg-blue-900 px-6 py-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -69,22 +109,30 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
               <span>Regresar</span>
             </button>
             
-            <div className="bg-white rounded-lg p-3 shadow-lg">
+            <div className="bg-blue-900 rounded-lg p-2 shadow-lg">
               <Image
                 src={logoMedellin}
                 alt="Alcaldía de Medellín"
-                width={56}
-                height={70}
-                className="w-14 h-[4.5rem] object-contain"
+                width={96}
+                height={120}
+                className="w-24 h-30 object-contain"
               />
             </div>
             
-            <div className="w-px h-12 bg-white opacity-50"></div>
+            <div className="w-px h-20 bg-white opacity-50"></div>
             
             <div className="text-white">
-              <h1 className="text-5xl font-bold">SIF</h1>
-              <p className="text-sm text-blue-200">Alcaldía de Medellín</p>
-              <p className="text-xs text-blue-300">Ciencia, Tecnología e Innovación</p>
+              <h1 
+                className={`${workSans.className} text-white`}
+                style={{
+                  fontWeight: 800,
+                  fontSize: '95.37px',
+                  lineHeight: '100%',
+                  letterSpacing: '0%'
+                }}
+              >
+                SIF
+              </h1>
             </div>
           </div>
 
@@ -105,7 +153,17 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
 
       <main className="px-8 py-8 relative z-10">
         <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
+          <h2 
+            className={`${workSans.className} text-gray-800 text-center mb-8 align-middle`}
+            style={{
+              fontWeight: 700,
+              fontSize: '48.83px',
+              lineHeight: '100%',
+              letterSpacing: '0%',
+              textAlign: 'center',
+              verticalAlign: 'middle'
+            }}
+          >
             Agregar Modificación
           </h2>
 
@@ -115,14 +173,14 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
               
               {/* COLUMNA 1: Tipo de modificación */}
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  <span className="text-red-500">*</span>% Tipo de modificación
+                <label className={`${workSans.className} block text-gray-700 mb-3`} style={{ fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0%', textAlign: 'center', verticalAlign: 'middle' }}>
+                  <span className="text-red-600 text-xl font-bold">*</span> Tipo de modificación
                 </label>
                 <select
                   name="tipoModificacion"
                   value={formData.tipoModificacion}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 text-lg font-medium"
                 >
                   <option value="">Seleccionar</option>
                   <option value="1">Tipo 1</option>
@@ -137,28 +195,28 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
               {/* COLUMNA 2: Fechas apiladas */}
               <div className="flex-1 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <span className="text-red-500">*</span>Fecha de Inicio
+                  <label className={`${workSans.className} block text-gray-700 mb-2`} style={{ fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0%', textAlign: 'center', verticalAlign: 'middle' }}>
+                    <span className="text-red-600 text-xl font-bold">*</span> Fecha de Inicio
                   </label>
                   <input
                     type="date"
                     name="fechasInicio"
                     value={formData.fechasInicio}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-lg font-medium"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <span className="text-red-500">*</span>Fecha Final
+                  <label className={`${workSans.className} block text-gray-700 mb-2`} style={{ fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0%', textAlign: 'center', verticalAlign: 'middle' }}>
+                    <span className="text-red-600 text-xl font-bold">*</span> Fecha Final
                   </label>
                   <input
                     type="date"
                     name="fechasFinal"
                     value={formData.fechasFinal}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-lg font-medium"
                   />
                 </div>
               </div>
@@ -178,7 +236,7 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
 
             {/* Observaciones */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className={`${workSans.className} block text-gray-700 mb-3 text-left`} style={{ fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0%', verticalAlign: 'middle' }}>
                 Observaciones:
               </label>
               <textarea
@@ -186,8 +244,8 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
                 value={formData.observaciones}
                 onChange={handleInputChange}
                 rows={8}
-                placeholder=""
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                placeholder="Escriba las observaciones aquí..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-gray-900 text-lg font-medium placeholder-gray-500"
               ></textarea>
             </div>
 
@@ -195,7 +253,7 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
             <div className="flex justify-end pt-4">
               <button
                 type="submit"
-                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors font-medium"
               >
                 Enviar
               </button>

@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import logoMedellin from '@/assets/logo-medellin.png';
+import { Work_Sans } from 'next/font/google';
+import logoMedellin from '@/assets/Logo-Medellin-new.png';
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+});
 
 // Datos básicos de contratos para mostrar contexto
 const sscData = {
@@ -155,7 +161,7 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
           <h2 className="text-2xl font-bold mb-4">Contrato no encontrado</h2>
           <button 
             onClick={() => router.push('/home')}
-            className="bg-white text-blue-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+            className="bg-white text-blue-600 px-6 py-2 rounded-full font-medium hover:bg-gray-100 transition-colors"
           >
             Regresar al inicio
           </button>
@@ -166,12 +172,13 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-300 via-cyan-400 to-blue-500 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div className="flex flex-col space-y-8 transform -rotate-0 translate-x-[-10%] translate-y-[0%] scale-150">
-          {Array.from({ length: 8 }).map((_, rowIndex) => (
-            <div key={rowIndex} className="flex space-x-16 whitespace-nowrap">
-              {Array.from({ length: 6 }).map((_, colIndex) => (
-                <span key={colIndex} className="text-blue-900 text-4xl font-bold select-none">
+      {/* Fondo con patrón */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="flex flex-col space-y-4 transform -rotate-0 translate-x-[-5%] translate-y-[0%] scale-[2]">
+          {Array.from({ length: 12 }).map((_, rowIndex) => (
+            <div key={rowIndex} className="flex space-x-8 whitespace-nowrap">
+              {Array.from({ length: 8 }).map((_, colIndex) => (
+                <span key={colIndex} className="text-blue-900 text-5xl font-black select-none tracking-[-0.1em] font-sans">
                   {rowIndex % 2 === 0 ? 'MEDELLIN' : 'TE QUIERE'}
                 </span>
               ))}
@@ -180,12 +187,12 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
         </div>
       </div>
 
-      <header className="bg-blue-800 px-6 py-4 relative z-10">
+              <header className="bg-blue-900 px-6 py-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={handleBackToHome}
-              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
+              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-full flex items-center space-x-2 transition-colors duration-200"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -193,22 +200,30 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
               <span>Regresar</span>
             </button>
             
-            <div className="bg-white rounded-lg p-3 shadow-lg">
+            <div className="bg-blue-900 rounded-lg p-2 shadow-lg">
               <Image
                 src={logoMedellin}
                 alt="Alcaldía de Medellín"
-                width={56}
-                height={70}
-                className="w-14 h-[4.5rem] object-contain"
+                width={96}
+                height={120}
+                className="w-24 h-30 object-contain"
               />
             </div>
             
-            <div className="w-px h-12 bg-white opacity-50"></div>
+            <div className="w-px h-20 bg-white opacity-50"></div>
             
             <div className="text-white">
-              <h1 className="text-5xl font-bold">SIF</h1>
-              <p className="text-sm text-blue-200">Alcaldía de Medellín</p>
-              <p className="text-xs text-blue-300">Ciencia, Tecnología e Innovación</p>
+              <h1 
+                className={`${workSans.className} text-white`}
+                style={{
+                  fontWeight: 800,
+                  fontSize: '95.37px',
+                  lineHeight: '100%',
+                  letterSpacing: '0%'
+                }}
+              >
+                SIF
+              </h1>
             </div>
           </div>
 
@@ -219,7 +234,7 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
             </div>
             <button
               onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg flex items-center space-x-2 transition-colors duration-200 text-sm"
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-full flex items-center space-x-2 transition-colors duration-200 text-sm"
             >
               <span>Cerrar Sesión</span>
               <span className="text-base">⊗</span>
@@ -229,26 +244,46 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
       </header>
 
       <main className="px-8 py-8 relative z-10">
-        <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-2xl mx-auto">
+        <div className="bg-white rounded-2xl p-12 shadow-2xl max-w-5xl mx-auto">
           {/* Información del contrato */}
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
-            <h3 className="text-lg font-semibold text-blue-800 mb-2">Contrato:</h3>
-            <div className="text-sm text-blue-700">
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-6 mb-8">
+            <h3 className="text-xl font-semibold text-blue-800 mb-3">Contrato:</h3>
+            <div className="text-base text-blue-700">
               <p><strong>ID:</strong> {contrato.CON_IDENTIFICADOR_SIMPLE}</p>
               <p><strong>Tipo:</strong> {contrato.CON_TIPO_CONTRATO}</p>
               <p><strong>Contratista:</strong> {contrato.CON_CONTRATISTA}</p>
             </div>
           </div>
 
-          <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
+          <h2 
+            className={`${workSans.className} text-gray-800 text-center mb-10 align-middle`}
+            style={{
+              fontWeight: 700,
+              fontSize: '48.83px',
+              lineHeight: '100%',
+              letterSpacing: '0%',
+              textAlign: 'center',
+              verticalAlign: 'middle'
+            }}
+          >
             Agregar Adición
           </h2>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Fecha de Adición *
+                <label 
+                  className={`${workSans.className} block text-gray-700 mb-3 align-middle`}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: '20px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    textAlign: 'center',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  Fecha de Adición <span className="text-red-600 text-xl font-bold">*</span>
                 </label>
                 <input
                   type="date"
@@ -256,13 +291,23 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
                   value={formData.fechasAdicion}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-6 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-lg"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Valor de la adición *
+                <label 
+                  className={`${workSans.className} block text-gray-700 mb-3 align-middle`}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: '20px',
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    textAlign: 'center',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  Valor de la adición <span className="text-red-600 text-xl font-bold">*</span>
                 </label>
                 <input
                   type="number"
@@ -272,37 +317,47 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
                   placeholder="Ej: 100000000"
                   min="0"
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-6 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-lg placeholder-gray-600"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Observaciones *
+              <label 
+                className={`${workSans.className} block text-gray-700 mb-3 align-middle`}
+                style={{
+                  fontWeight: 600,
+                  fontSize: '20px',
+                  lineHeight: '100%',
+                  letterSpacing: '0%',
+                  textAlign: 'left',
+                  verticalAlign: 'middle'
+                }}
+              >
+                Observaciones
               </label>
               <textarea
                 name="observaciones"
                 value={formData.observaciones}
                 onChange={handleInputChange}
-                rows={6}
+                rows={8}
                 placeholder="Describa la razón de la adición, justificación y otros detalles relevantes..."
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full px-6 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-gray-900 text-lg placeholder-gray-600"
               ></textarea>
             </div>
 
-            <div className="flex justify-end gap-4 pt-4">
+            <div className="flex justify-end gap-6 pt-6">
               <button
                 type="button"
                 onClick={handleBackToHome}
-                className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                className="px-8 py-4 bg-gray-500 hover:bg-gray-600 text-white rounded-full transition-colors text-lg font-medium"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className="px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors text-lg font-medium"
               >
                 Guardar Adición
               </button>
