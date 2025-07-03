@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Contrato, contratoService } from '@/services/contratosService';
 
-export const useContrato = (id: number | null) => {
+export const useContratoInfo = (id: number | null) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [contrato, setContrato] = useState<Contrato | null>(null);

@@ -7,7 +7,7 @@ import { formatCurrency } from '@/utils/formatCurrency';
 import { formatDate } from '@/utils/formatDate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileLines, faListCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { useContrato } from '@/hooks/useContrato';
+import { useContratoInfo } from '@/hooks/useContratoInfo';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const { modificaciones, adiciones, seguimiento_general} = sscData
@@ -19,7 +19,7 @@ console.log(seguimiento_general);
 export default function ContratosPage() {
   const router = useRouter();
   const { id } = useParams();
-  const { loading, error, contrato } = useContrato(Number(id));
+  const { loading, error, contrato } = useContratoInfo(Number(id));
 
   console.log(contrato)
  
