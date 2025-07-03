@@ -8,8 +8,8 @@ export interface Usuario {
     email: string;
     rol: string;
     nombre: string;
-    createdAt?: string;
-    updatedAt?: string;
+    mustChangePassword: boolean;
+    lastPasswordChange?: boolean;
 }
 
 interface AuthContextType {
@@ -24,6 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<Usuario | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
@@ -58,10 +59,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    router.push('/login');
     setUser(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    router.push('/login');
   };
 
   const hasRole = (role: string) => {

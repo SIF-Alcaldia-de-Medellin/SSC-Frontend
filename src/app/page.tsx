@@ -9,6 +9,8 @@ import { formatCurrency } from '@/utils/formatCurrency';
 import sscData from '@/services/mocks/data';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useContratos } from '@/hooks/useContratos';
+import { Contrato } from '@/services/contratosService';
 
 interface Contract {
   id: number;
@@ -34,9 +36,9 @@ interface Contract {
 const mockData: Contract[] = sscData.contratos;
 
 export default function HomePage() {
-
+  const {loading, error, contratos} = useContratos();
   const router = useRouter();
-
+  if(!loading) console.log(contratos)
   const handleSelectContract = (contract: Contract) => {
     router.push(`/contratos/${contract.id}`);
   }
@@ -49,17 +51,17 @@ export default function HomePage() {
           <h1 className='text-[48.8px] font-bold text-center'>
             ¿Que <span className='text-[#3366CC]'>contrato</span> deseas realizarle seguimiento?
           </h1>
-          {Math.random() > 0.5 ? 
+          {loading ? 
             (<>
-            <LoadingSpinner hexColor="3366CC"  />
+            <LoadingSpinner hexColor="3366CC" className='fill-[#3366CC]'  />
             <p className='text-[20px] font-semibold text-center'>Cargando...</p>
             </>) 
             : 
-            (<div className='flex flex-wrap gap-[20px] justify-center items-center'>
+            (<div className='flex flex-wrap gap-[20px] justify-center items-center w-full'>
               {/* Card */}
-              {mockData.map((contract: Contract, index: number) => (
+              {contratos?.map((contract: Contrato, index: number) => (
                 <Card 
-                  className={"w-[calc(1/3*100%-20px)] min-h-[250px] " + (index % 2 == 0 ? 'bg-[#FF8403]' : 'bg-[#00CD6C]')} 
+                  className={`max-w-[calc(1/3*100%-20px)] min-h-[250px] ` + (index % 2 == 0 ? 'bg-[#FF8403]' : 'bg-[#00CD6C]')} 
                   title={`Contrato #${contract.numeroContrato}`} 
                   subtitle={`Vigencia: ${contract.anoSuscripcion}`}
                   key={contract.id}
@@ -67,7 +69,7 @@ export default function HomePage() {
                   <p className='text-[16px] font-normal h-[70px] w-full line-clamp-3'>{contract.objeto}</p>
                   <div className='flex flex-col gap-[5px] self-end items-end'>
                     <h6 className='text-white text-[20px] w-fit font-semibold'>
-                      Valor: {formatCurrency(contract.valorTotal)}
+                      Valor: {formatCurrency(Number(contract.valorTotal))}
                     </h6>
                     <button className='bg-[#3366CC] hover:bg-[#2A55AA] transition-all duration-300 text-white px-[20px] py-[10px] rounded-full w-fit cursor-pointer' onClick={() => handleSelectContract(contract)}>Seleccionar</button>
                   </div>

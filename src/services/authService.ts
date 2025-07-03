@@ -8,6 +8,8 @@ export interface LoginCredentials {
 
 export interface AuthResponse {
     access_token: string;
+    user: Usuario;
+    mustChangePassword: boolean;
 }
 
 export interface RegisterCredentials {

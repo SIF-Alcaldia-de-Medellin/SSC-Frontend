@@ -18,8 +18,7 @@ export const useAuth = () => {
                     setIsInitialized(true);
                     return;
                 }
-
-                // Solo validar token si no hay usuario en el contexto
+                
                 const token = localStorage.getItem('token');
                 if (token) {
                     // Validar token con el backend
@@ -43,10 +42,11 @@ export const useAuth = () => {
         setError(null);
         
         try {
-            const { access_token: token } = await authService.login(credentials);
-            const user = await authService.getCurrentUser(token);
+            const { access_token: token, user } = await authService.login(credentials);
             contextLogin(user, token);
-            router.push('/dashboard');
+            const pathTo = (!user.mustChangePassword) ? '/' : '/update-password';
+            console.log(pathTo);
+            router.push('/');
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Error de autenticación';
             setError(errorMessage);

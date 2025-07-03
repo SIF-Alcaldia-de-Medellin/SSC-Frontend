@@ -13,8 +13,6 @@ export const apiClient = {
       ...options,
     };
 
-    console.log(`token: ${token}`);
-
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
     
     if (!response.ok) {
