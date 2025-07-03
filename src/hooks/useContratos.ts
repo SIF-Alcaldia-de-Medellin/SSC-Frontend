@@ -11,8 +11,7 @@ export const useContratos = () => {
             setLoading(true);
             try { 
                 const contratos = await contratoService.getContratos();
-                const repeat = contratos
-                setContratos([...contratos ]);
+                setContratos(contratos);
             } catch (err: unknown) {
                 const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar los contratos';
                 setError(errorMessage);

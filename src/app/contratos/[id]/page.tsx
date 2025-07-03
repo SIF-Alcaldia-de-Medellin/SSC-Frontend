@@ -10,16 +10,14 @@ import { faFileLines, faListCheck, faPlus } from '@fortawesome/free-solid-svg-ic
 import { useContratoInfo } from '@/hooks/useContratoInfo';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-const { modificaciones, adiciones, seguimiento_general} = sscData
+const {  seguimiento_general} = sscData
 
-console.log(adiciones);
-console.log(modificaciones);
 console.log(seguimiento_general);
 
 export default function ContratosPage() {
   const router = useRouter();
   const { id } = useParams();
-  const { loading, error, contrato } = useContratoInfo(Number(id));
+  const { loading, error, contrato, modificaciones, adiciones } = useContratoInfo(Number(id));
 
   console.log(contrato)
  
@@ -86,7 +84,7 @@ export default function ContratosPage() {
                       </tr>
                     </thead>
                     <tbody className='bg-[#A5E6FF] text-[#001D28] text-[16px]'>
-                      {adiciones.map((adicion) => (
+                      {adiciones?.map((adicion) => (
                         <tr key={adicion.id} className='text-center font-normal py-[10px] hover:bg-[#78DAFF]'>
                           <td className='py-[10px]'>{formatDate(adicion.fecha)}</td>
                           <td className='py-[10px]'>{formatCurrency(adicion.valorAdicion)}</td>
@@ -111,7 +109,7 @@ export default function ContratosPage() {
                       </tr>
                     </thead>
                     <tbody className='bg-[#C0E2FF] text-[#001D28] text-[16px]'>
-                      {modificaciones.map((modificacion) => (
+                      {modificaciones?.map((modificacion) => (
                         <tr key={modificacion.id} className='text-center font-normal py-[10px] hover:bg-[#81C6FF]'>
                           <td className='py-[10px]'>{modificacion.tipo}</td>
                           <td className='py-[10px]'>{formatDate(modificacion.fechaInicio)}</td>

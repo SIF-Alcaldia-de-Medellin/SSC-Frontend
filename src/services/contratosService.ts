@@ -26,11 +26,49 @@ export interface Contrato {
     }
 }
 
+export interface Adicion {
+    id: number;
+    contratoId: number;
+    contrato: {
+      numeroContrato: string;
+      identificadorSimple: string;
+      objeto: string;
+      valorTotal: string;
+    };
+    valorAdicion: number;
+    fecha: string;
+    createdAt: string;
+    observaciones: string;
+}
+
+export interface Modificacion {
+    id: number;
+    contratoId: number;
+    tipo: string;
+    fechaInicio: string;
+    fechaFinal: string;
+    duracion: number;
+    createdAt: string;
+    observaciones: string;
+    contrato: {
+      numeroContrato: string;
+      identificadorSimple: string;
+      objeto: string;
+      fechaTerminacionActual: string;
+    }
+}
+
 export const contratoService = {
     async getContratos(): Promise<Contrato[]>{
         return apiClient.get('/contratos')
     },
     async getContratoById(id: number): Promise<Contrato>{
         return apiClient.get(`/contratos/${id}`)
-    }
+    },
+    async getAdicionesByContratoId(id: number): Promise<Adicion[]>{
+        return apiClient.get(`/adiciones/contrato/${id}`)
+    },
+    async getModificacionesByContratoId(id: number): Promise<Modificacion[]>{
+        return apiClient.get(`/modificaciones/contrato/${id}`)
+    },
 };
