@@ -73,6 +73,7 @@ export default function HomePage() {
   const [supervisores, setSupervisores] = useState<SupervisorOption[]>([]);
   const [loadingSupervisores, setLoadingSupervisores] = useState(false);
   const [creatingContrato, setCreatingContrato] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
 
   const [formData, setFormData] = useState<CreateContratoForm>({
@@ -305,6 +306,12 @@ export default function HomePage() {
     }
   };
 
+  // Filtrar contratos por número de contrato
+  const contratosFiltrados = contratos.filter(contrato => {
+    if (!searchTerm) return true;
+    return contrato.CON_NRO_CONTRATO.toString().includes(searchTerm);
+  });
+
   const formatearValor = (valor: number) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -426,6 +433,48 @@ export default function HomePage() {
               </button>
             )}
           </div>
+
+          {/* Campo de búsqueda solo para administradores */}
+          {esAdministrador && contratos.length > 0 && (
+            <div className="mb-6">
+              <div className="max-w-md mx-auto">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Buscar por número de contrato..."
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  />
+                  {searchTerm && (
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {searchTerm && (
+                  <p className="mt-2 text-sm text-gray-600 text-center">
+                    {contratosFiltrados.length === 0 
+                      ? `No se encontraron contratos con el número "${searchTerm}"`
+                      : `Se encontraron ${contratosFiltrados.length} contrato${contratosFiltrados.length !== 1 ? 's' : ''}`
+                    }
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
           
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px] items-center justify-center">
@@ -437,8 +486,9 @@ export default function HomePage() {
               </div>
             </div>
           ) : contratos.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {contratos.map((contrato, index) => (
+            contratosFiltrados.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {contratosFiltrados.map((contrato, index) => (
                 <div 
                   key={contrato.CON_ID}
                   onClick={() => handleContratoClick(contrato.CON_ID)}
@@ -497,7 +547,28 @@ export default function HomePage() {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px] items-center justify-center">
+                <div className="col-span-full text-center text-gray-500 text-lg">
+                  <div className="bg-gray-100 rounded-lg p-12">
+                    <div className="mb-4">
+                      <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                    <p className="text-xl font-medium mb-2">No se encontraron contratos</p>
+                    <p className="text-gray-400 mb-4">No hay contratos que coincidan con "{searchTerm}"</p>
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      Limpiar búsqueda
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px] items-center justify-center">
               <div className="col-span-full text-center text-gray-500 text-lg">
