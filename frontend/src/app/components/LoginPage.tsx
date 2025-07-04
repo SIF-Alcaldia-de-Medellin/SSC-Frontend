@@ -1,46 +1,18 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Work_Sans } from 'next/font/google';
 import logoMedellin from '@/assets/Logo-Medellin-new.png';
+import { authApi, checkBackendConnection } from '@/lib/api';
 
 const workSans = Work_Sans({
   subsets: ['latin'],
   weight: ['200', '400', '500', '600', '700', '800'],
 });
 
-// Importar el simulador de API directamente
-const usuariosSimulados = [
-  {
-    USU_CEDULA: 12345678,
-    USU_EMAIL: "admin@medellin.gov.co",
-    USU_PASSWORD: "admin123",
-    USU_ROL: "admin",
-    USU_NOMBRE: "María González",
-    USU_CREATED_AT: "2024-01-15T09:00:00Z",
-    USU_UPDATED_AT: "2024-01-15T09:00:00Z"
-  },
-  {
-    USU_CEDULA: 87654321,
-    USU_EMAIL: "supervisor@medellin.gov.co",
-    USU_PASSWORD: "super123",
-    USU_ROL: "supervisor",
-    USU_NOMBRE: "Carlos Ramírez",
-    USU_CREATED_AT: "2024-01-15T09:00:00Z",
-    USU_UPDATED_AT: "2024-01-15T09:00:00Z"
-  },
-  {
-    USU_CEDULA: 11223344,
-    USU_EMAIL: "jefe@medellin.gov.co",
-    USU_PASSWORD: "jefe123",
-    USU_ROL: "jefe",
-    USU_NOMBRE: "Ana Martínez",
-    USU_CREATED_AT: "2024-01-15T09:00:00Z",
-    USU_UPDATED_AT: "2024-01-15T09:00:00Z"
-  }
-];
+// Sin credenciales hardcodeadas - solo datos reales del backend
 
 export default function LoginPage() {
   const [showError, setShowError] = useState(false);
@@ -48,7 +20,13 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [backendAvailable, setBackendAvailable] = useState<boolean | null>(null);
   const router = useRouter();
+
+  // Verificar conexión al backend al cargar la página
+  useEffect(() => {
+    checkBackendConnection().then(setBackendAvailable);
+  }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -62,47 +40,49 @@ export default function LoginPage() {
     setShowError(false);
 
     try {
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 800));
-
-      // Buscar usuario en los datos simulados
-      const usuario = usuariosSimulados.find(u => 
-        u.USU_EMAIL.toLowerCase() === email.toLowerCase()
-      );
-
-      if (!usuario) {
-        setErrorMessage('Usuario no encontrado');
-        setShowError(true);
-        setTimeout(() => setShowError(false), 3000);
-        return;
-      }
-
-      if (usuario.USU_PASSWORD !== password) {
-        setErrorMessage('Contraseña incorrecta');
-        setShowError(true);
-        setTimeout(() => setShowError(false), 3000);
-        return;
-      }
-
-      // Autenticación exitosa
-      const usuarioSinPassword = {
-        USU_CEDULA: usuario.USU_CEDULA,
-        USU_EMAIL: usuario.USU_EMAIL,
-        USU_ROL: usuario.USU_ROL,
-        USU_NOMBRE: usuario.USU_NOMBRE,
-        USU_CREATED_AT: usuario.USU_CREATED_AT,
-        USU_UPDATED_AT: usuario.USU_UPDATED_AT
+      // Intentar login con el backend real
+      const loginResponse = await authApi.login({ email, password });
+      
+      // Guardar token
+      localStorage.setItem('token', loginResponse.access_token);
+      
+      // Extraer información del usuario desde el token
+      const usuario = authApi.extractUserFromToken(loginResponse.access_token);
+      
+      // Guardar información del usuario
+      const usuarioData = {
+        USU_CEDULA: usuario.cedula,
+        USU_EMAIL: usuario.email,
+        USU_ROL: usuario.rol,
+        USU_NOMBRE: usuario.nombre,
+        USU_CREATED_AT: new Date().toISOString(),
+        USU_UPDATED_AT: new Date().toISOString()
       };
-
-      // Guardar información del usuario en localStorage
-      localStorage.setItem('user', JSON.stringify(usuarioSinPassword));
-      localStorage.setItem('token', `mock_token_${usuario.USU_CEDULA}_${Date.now()}`);
+      
+      localStorage.setItem('user', JSON.stringify(usuarioData));
       
       // Redireccionar al home
       router.push('/home');
 
-    } catch {
-      setErrorMessage('Error de conexión. Intenta nuevamente.');
+    } catch (error: unknown) {
+      // Determinar el mensaje de error apropiado
+      let mensaje = 'Error de conexión. Intenta nuevamente.';
+      
+      if (error && typeof error === 'object' && 'statusCode' in error) {
+        switch (error.statusCode) {
+          case 401:
+            mensaje = 'Credenciales incorrectas';
+            break;
+          case 404:
+            mensaje = 'Usuario no encontrado';
+            break;
+          case 500:
+            mensaje = 'Error interno del servidor';
+            break;
+        }
+      }
+      
+      setErrorMessage(mensaje);
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
     } finally {
@@ -190,14 +170,23 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Credenciales de prueba */}
-          <div className="bg-blue-700 text-white px-4 py-3 rounded-lg">
-            <p className="text-xs font-semibold mb-2">💡 Credenciales de Prueba:</p>
-            <div className="text-xs space-y-1">
-              <p><strong>Admin:</strong> admin@medellin.gov.co / admin123</p>
-              <p><strong>Supervisor:</strong> supervisor@medellin.gov.co / super123</p>
-              <p><strong>Jefe:</strong> jefe@medellin.gov.co / jefe123</p>
-            </div>
+          {/* Estado del backend */}
+          <div className={`px-4 py-3 rounded-lg ${
+            backendAvailable === null 
+              ? 'bg-yellow-600 text-white' 
+              : backendAvailable 
+                ? 'bg-green-600 text-white'
+                : 'bg-red-600 text-white'
+          }`}>
+            {backendAvailable === null && (
+              <p className="text-xs font-semibold">🔄 Verificando conexión con el servidor...</p>
+            )}
+            {backendAvailable === true && (
+              <p className="text-xs font-semibold">✅ Conectado al servidor SSC</p>
+            )}
+            {backendAvailable === false && (
+              <p className="text-xs font-semibold">❌ Servidor no disponible. Contacte al administrador.</p>
+            )}
           </div>
 
           {showError && (

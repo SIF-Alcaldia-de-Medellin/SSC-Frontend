@@ -1,35 +1,16 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Work_Sans } from 'next/font/google';
 import logoMedellin from '@/assets/Logo-Medellin-new.png';
+import { contratosApi, adicionesApi } from '@/lib/api';
 
 const workSans = Work_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
 });
-
-// Datos básicos de contratos para mostrar contexto
-const sscData = {
-  "contratos": [
-    {
-      "CON_ID": 1,
-      "CON_NRO_CONTRATO": 460010403,
-      "CON_IDENTIFICADOR_SIMPLE": "#460010403",
-      "CON_TIPO_CONTRATO": "INTERVENTORÍA",
-      "CON_CONTRATISTA": "TERMINALES DE TRANSPORTE MEDELLÍN S.A."
-    },
-    {
-      "CON_ID": 2,
-      "CON_NRO_CONTRATO": 460010404,
-      "CON_IDENTIFICADOR_SIMPLE": "#460010404",
-      "CON_TIPO_CONTRATO": "OBRA PÚBLICA",
-      "CON_CONTRATISTA": "CONSTRUCTORA VÍAS S.A.S."
-    }
-  ]
-};
 
 interface Usuario {
   USU_CEDULA: number;
@@ -38,22 +19,32 @@ interface Usuario {
   USU_NOMBRE: string;
 }
 
-interface ContratoBasico {
-  CON_ID: number;
-  CON_NRO_CONTRATO: number;
-  CON_IDENTIFICADOR_SIMPLE: string;
-  CON_TIPO_CONTRATO: string;
-  CON_CONTRATISTA: string;
+interface ContratoDetalle {
+  id: number;
+  numeroContrato: string;
+  programa: string;
+  tipoContrato: string;
+  objeto: string;
+  estado: string;
+  contratista: string;
+  fechaInicio: string;
+  fechaTerminacionActual: string;
+  valorInicial: number;
+  valorTotal: number;
 }
 
 interface AgregarAdicionPageProps {
+  contratoId?: string | null;
   onBackToHome?: () => void;
+  onSuccess?: () => void;
 }
 
-export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageProps = {}) {
+export default function AgregarAdicionPage({ contratoId, onBackToHome, onSuccess }: AgregarAdicionPageProps) {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
-  const [contrato, setContrato] = useState<ContratoBasico | null>(null);
+  const [contrato, setContrato] = useState<ContratoDetalle | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     fechasAdicion: '',
     valorAdicion: '',
@@ -61,8 +52,6 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
   });
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const contratoId = searchParams.get('contrato');
 
   useEffect(() => {
     // Verificar autenticación
@@ -82,21 +71,31 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
         return;
       }
       
-      // Buscar datos básicos del contrato
-      const contratoEncontrado = sscData.contratos.find(c => c.CON_ID.toString() === contratoId);
-      if (!contratoEncontrado) {
-        router.push('/home');
-        return;
-      }
-
-      setContrato(contratoEncontrado);
-      setLoading(false);
+      // Cargar datos reales del contrato
+      loadContratoData(parseInt(contratoId));
 
     } catch (error) {
       console.error('Error al cargar datos:', error);
+      setError('Error de autenticación');
       router.push('/');
     }
   }, [router, contratoId]);
+
+  const loadContratoData = async (id: number) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const contratoData = await contratosApi.getContrato(id);
+      setContrato(contratoData);
+      
+    } catch (err: any) {
+      console.error('Error al cargar contrato:', err);
+      setError(err.message || 'Error al cargar los datos del contrato');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -123,24 +122,56 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validaciones básicas
-    if (!formData.fechasAdicion || !formData.valorAdicion || !formData.observaciones) {
-      alert('Por favor complete todos los campos');
-      return;
+    try {
+      setIsSubmitting(true);
+      setError(null);
+
+      // Validaciones
+      if (!formData.fechasAdicion || !formData.valorAdicion || !formData.observaciones) {
+        throw new Error('Por favor complete todos los campos');
+      }
+
+      if (!contratoId) {
+        throw new Error('ID de contrato requerido');
+      }
+
+      const valorNumerico = parseFloat(formData.valorAdicion);
+      if (isNaN(valorNumerico) || valorNumerico <= 0) {
+        throw new Error('El valor de la adición debe ser un número mayor a 0');
+      }
+
+      // Preparar datos para enviar
+      const adicionData = {
+        contratoId: parseInt(contratoId),
+        valorAdicion: valorNumerico,
+        fecha: formData.fechasAdicion,
+        observaciones: formData.observaciones.trim()
+      };
+
+      // Guardar en la base de datos
+      await adicionesApi.create(adicionData);
+
+      // Mostrar confirmación
+      alert('Adición guardada exitosamente en la base de datos');
+
+      // Notificar éxito al componente padre para actualizar los datos
+      if (onSuccess) {
+        onSuccess();
+      }
+
+      // Regresar al contrato
+      handleBackToHome();
+
+    } catch (err: any) {
+      const errorMessage = err.message || 'Error al guardar la adición';
+      setError(errorMessage);
+      console.error('Error submitting adicion:', err);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Simular guardado de adición
-    console.log('Guardando adición:', {
-      contratoId,
-      ...formData
-    });
-
-    // Mostrar confirmación y regresar al contrato
-    alert('Adición guardada exitosamente');
-    handleBackToHome();
   };
 
   if (loading || !usuario) {
@@ -148,7 +179,24 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
       <div className="min-h-screen bg-gradient-to-br from-cyan-300 via-cyan-400 to-blue-500 flex items-center justify-center">
         <div className="text-white text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p>Cargando formulario...</p>
+          <p>Cargando datos del contrato...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !contrato) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-cyan-300 via-cyan-400 to-blue-500 flex items-center justify-center">
+        <div className="text-white text-center">
+          <h2 className="text-2xl font-bold mb-4">Error</h2>
+          <p className="mb-4">{error}</p>
+          <button 
+            onClick={() => router.push('/home')}
+            className="bg-white text-blue-600 px-6 py-2 rounded-full font-medium hover:bg-gray-100 transition-colors"
+          >
+            Regresar al inicio
+          </button>
         </div>
       </div>
     );
@@ -187,7 +235,7 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
         </div>
       </div>
 
-              <header className="bg-blue-900 px-6 py-4 relative z-10">
+      <header className="bg-blue-900 px-6 py-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -245,13 +293,23 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
 
       <main className="px-8 py-8 relative z-10">
         <div className="bg-white rounded-2xl p-12 shadow-2xl max-w-5xl mx-auto">
-          {/* Información del contrato */}
+          {/* Información del contrato real */}
           <div className="bg-blue-50 border-l-4 border-blue-400 p-6 mb-8">
             <h3 className="text-xl font-semibold text-blue-800 mb-3">Contrato:</h3>
-            <div className="text-base text-blue-700">
-              <p><strong>ID:</strong> {contrato.CON_IDENTIFICADOR_SIMPLE}</p>
-              <p><strong>Tipo:</strong> {contrato.CON_TIPO_CONTRATO}</p>
-              <p><strong>Contratista:</strong> {contrato.CON_CONTRATISTA}</p>
+            <div className="text-base text-blue-700 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p><strong>ID:</strong> {contrato.id}</p>
+                <p><strong>Número:</strong> {contrato.numeroContrato}</p>
+                <p><strong>Tipo:</strong> {contrato.tipoContrato}</p>
+              </div>
+              <div>
+                <p><strong>Contratista:</strong> {contrato.contratista}</p>
+                <p><strong>Estado:</strong> {contrato.estado}</p>
+                <p><strong>Valor Total:</strong> ${contrato.valorTotal.toLocaleString('es-CO')}</p>
+              </div>
+              <div className="md:col-span-2">
+                <p><strong>Objeto:</strong> {contrato.objeto}</p>
+              </div>
             </div>
           </div>
 
@@ -268,6 +326,12 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
           >
             Agregar Adición
           </h2>
+
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -315,7 +379,8 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
                   value={formData.valorAdicion}
                   onChange={handleInputChange}
                   placeholder="Ej: 100000000"
-                  min="0"
+                  min="1"
+                  step="1"
                   required
                   className="w-full px-6 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-lg placeholder-gray-600"
                 />
@@ -334,7 +399,7 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
                   verticalAlign: 'middle'
                 }}
               >
-                Observaciones
+                Observaciones <span className="text-red-600 text-xl font-bold">*</span>
               </label>
               <textarea
                 name="observaciones"
@@ -351,15 +416,21 @@ export default function AgregarAdicionPage({ onBackToHome }: AgregarAdicionPageP
               <button
                 type="button"
                 onClick={handleBackToHome}
-                className="px-8 py-4 bg-gray-500 hover:bg-gray-600 text-white rounded-full transition-colors text-lg font-medium"
+                disabled={isSubmitting}
+                className="px-8 py-4 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white rounded-full transition-colors text-lg font-medium"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors text-lg font-medium"
+                disabled={isSubmitting}
+                className={`px-10 py-4 text-white rounded-full transition-colors text-lg font-medium ${
+                  isSubmitting 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-blue-600 hover:bg-blue-700'
+                }`}
               >
-                Guardar Adición
+                {isSubmitting ? 'Guardando...' : 'Guardar Adición'}
               </button>
             </div>
           </form>

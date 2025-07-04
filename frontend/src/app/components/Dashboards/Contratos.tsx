@@ -1,113 +1,20 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Work_Sans } from 'next/font/google';
 import logoMedellin from '@/assets/Logo-Medellin-new.png';
+import { contratosApi, seguimientoGeneralApi, adicionesApi, modificacionesApi } from '@/lib/api';
+import AgregarAdicionPage from './AgregarAdicion';
+import AgregarModificacionPage from './AgregarModificacion';
 
 const workSans = Work_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
 });
 
-// Datos del sistema SSC
-const sscData = {
-  "contratos": [
-    {
-      "CON_ID": 1,
-      "CON_USU_CEDULA": 12345678,
-      "CON_NRO_CONTRATO": 460010403,
-      "CON_ANO_SUSCRIPCION": 2025,
-      "CON_PROGRAMA": "Infraestructura Verde",
-      "CON_TIPO_CONTRATO": "INTERVENTORÍA",
-      "CON_OBJETO": "CONTRATO INTERADMINISTRATIVO DE MANDATO SIN REPRESENTACIÓN PARA LA DISPOSICIÓN, MANTENIMIENTO Y CONSERVACIÓN DE LA INFRAESTRUCTURA VERDE EXISTENTE",
-      "CON_IDENTIFICADOR_SIMPLE": "#460010403",
-      "CON_SUPERVISOR_TECNICO": "TERMINALES DE TRANSPORTE MEDELLÍN S.A.",
-      "CON_SUPLENTES": "Juan Pérez, Laura Gómez",
-      "CON_APOYO": "Equipo Técnico Municipal",
-      "CON_ESTADO": "ACTIVO",
-      "CON_CONTRATISTA": "TERMINALES DE TRANSPORTE MEDELLÍN S.A.",
-      "CON_NRO_PROCESO": "CV-2025-001",
-      "CON_FECHA_INI": "2025-01-01",
-      "CON_FECHA_TER_INI": "2025-09-01",
-      "CON_FECHA_TER_ACT": "2025-10-15",
-      "CON_VALOR_INI": 1645728320,
-      "CON_VALOR_TOTAL": 1745728320
-    },
-    {
-      "CON_ID": 2,
-      "CON_USU_CEDULA": 87654321,
-      "CON_NRO_CONTRATO": 460010404,
-      "CON_ANO_SUSCRIPCION": 2025,
-      "CON_PROGRAMA": "Movilidad Sostenible",
-      "CON_TIPO_CONTRATO": "OBRA PÚBLICA",
-      "CON_OBJETO": "CONSTRUCCIÓN Y ADECUACIÓN DE CICLORRUTAS EN LA COMUNA 10 DE MEDELLÍN",
-      "CON_IDENTIFICADOR_SIMPLE": "#460010404",
-      "CON_SUPERVISOR_TECNICO": "EMPRESA DE DESARROLLO URBANO",
-      "CON_SUPLENTES": "Pedro López, Sandra Cruz",
-      "CON_APOYO": "Secretaría de Movilidad",
-      "CON_ESTADO": "ACTIVO",
-      "CON_CONTRATISTA": "CONSTRUCTORA VÍAS S.A.S.",
-      "CON_NRO_PROCESO": "CV-2025-002",
-      "CON_FECHA_INI": "2025-02-01",
-      "CON_FECHA_TER_INI": "2025-08-01",
-      "CON_FECHA_TER_ACT": "2025-08-01",
-      "CON_VALOR_INI": 2500000000,
-      "CON_VALOR_TOTAL": 2500000000
-    }
-  ],
-  "adiciones": [
-    {
-      "ADI_ID": 1,
-      "ADI_CON_ID": 1,
-      "ADI_VALOR_ADICION": 100000000,
-      "ADI_FECHA": "2025-01-15",
-      "ADI_CREATED_AT": "2025-01-15T11:20:00Z",
-      "ADI_OBSERVACIONES": "Adición para ampliación del alcance del proyecto incluyendo zona centro de la ciudad."
-    }
-  ],
-  "modificaciones": [
-    {
-      "MOD_ID": 1,
-      "MOD_CON_ID": 1,
-      "MOD_TIPO": "PLAZO",
-      "MOD_FECHA_INICIO": "2025-09-01",
-      "MOD_FECHA_FINAL": "2025-10-15",
-      "MOD_DURACION": 44,
-      "MOD_CREATED_AT": "2025-01-10T09:15:00Z",
-      "MOD_OBSERVACIONES": "Prórroga solicitada por el contratista debido a condiciones climáticas adversas."
-    },
-    {
-      "MOD_ID": 2,
-      "MOD_CON_ID": 2,
-      "MOD_TIPO": "ALCANCE",
-      "MOD_FECHA_INICIO": "2025-02-01",
-      "MOD_FECHA_FINAL": "2025-08-01",
-      "MOD_DURACION": 0,
-      "MOD_CREATED_AT": "2024-12-20T13:45:00Z",
-      "MOD_OBSERVACIONES": "Modificación del alcance para incluir señalización vertical y horizontal adicional."
-    }
-  ],
-  "seguimiento_general": [
-    {
-      "SEG_ID": 1,
-      "SEG_CON_ID": 1,
-      "SEG_AVANCE_FINANCIERO": 45,
-      "SEG_AVANCE_FISICO": 42,
-      "SEG_CREATED_AT": "2025-01-20T14:30:00Z",
-      "SEG_OBSERVACIONES": "El proyecto avanza según cronograma. Se han completado las actividades de diagnóstico y diseño preliminar."
-    },
-    {
-      "SEG_ID": 2,
-      "SEG_CON_ID": 2,
-      "SEG_AVANCE_FINANCIERO": 25,
-      "SEG_AVANCE_FISICO": 30,
-      "SEG_CREATED_AT": "2025-01-18T16:45:00Z",
-      "SEG_OBSERVACIONES": "Iniciadas las obras de ciclorrutas en el sector A. Se presenta leve retraso por lluvias."
-    }
-  ]
-};
+// Eliminamos los datos hardcodeados - ahora todo viene de la base de datos real
 
 // Interfaces
 interface Usuario {
@@ -140,20 +47,112 @@ interface Contrato {
 }
 
 interface ContratosPageProps {
+  contratoId?: string | null;
   onBackToHome?: () => void;
 }
 
-export default function ContratosPage({ onBackToHome }: ContratosPageProps = {}) {
+export default function ContratosPage({ contratoId, onBackToHome }: ContratosPageProps) {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [contrato, setContrato] = useState<Contrato | null>(null);
   const [adiciones, setAdiciones] = useState<{ADI_ID: number; ADI_CON_ID: number; ADI_VALOR_ADICION: number; ADI_FECHA: string; ADI_OBSERVACIONES: string}[]>([]);
   const [modificaciones, setModificaciones] = useState<{MOD_ID: number; MOD_CON_ID: number; MOD_TIPO: string; MOD_DURACION: number; MOD_OBSERVACIONES: string}[]>([]);
   const [seguimiento, setSeguimiento] = useState<{SEG_ID: number; SEG_CON_ID: number; SEG_AVANCE_FINANCIERO: number; SEG_AVANCE_FISICO: number; SEG_OBSERVACIONES: string} | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAgregarAdicion, setShowAgregarAdicion] = useState(false);
+  const [showAgregarModificacion, setShowAgregarModificacion] = useState(false);
   
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const contratoId = searchParams.get('id');
+
+  // Función para cargar datos del contrato desde la API
+  const loadContractData = useCallback(async (contratoId: string) => {
+    try {
+      setLoading(true);
+      
+      // Cargar contrato desde la API real (sin datos hardcodeados)
+      const contratoData = await contratosApi.getContrato(parseInt(contratoId));
+      
+      // Mapear directamente los datos del backend a la interfaz del frontend
+      const contratoFormateado: Contrato = {
+        CON_ID: contratoData.id,
+        CON_USU_CEDULA: 0, // Campo opcional no disponible en API
+        CON_NRO_CONTRATO: parseInt(contratoData.numeroContrato.toString()),
+        CON_ANO_SUSCRIPCION: new Date().getFullYear(), // Campo calculado
+        CON_PROGRAMA: contratoData.programa,
+        CON_TIPO_CONTRATO: contratoData.tipoContrato,
+        CON_OBJETO: contratoData.objeto,
+        CON_IDENTIFICADOR_SIMPLE: `#${contratoData.numeroContrato}`,
+        CON_SUPERVISOR_TECNICO: "No asignado", // Campo no disponible en API
+        CON_SUPLENTES: "No asignado", // Campo no disponible en API
+        CON_APOYO: "No asignado", // Campo no disponible en API
+        CON_ESTADO: contratoData.estado,
+        CON_CONTRATISTA: contratoData.contratista,
+        CON_NRO_PROCESO: "N/A", // Campo no disponible en API
+        CON_FECHA_INI: contratoData.fechaInicio,
+        CON_FECHA_TER_INI: contratoData.fechaTerminacionActual, // Usando el mismo campo
+        CON_FECHA_TER_ACT: contratoData.fechaTerminacionActual,
+        CON_VALOR_INI: contratoData.valorInicial,
+        CON_VALOR_TOTAL: contratoData.valorTotal
+      };
+
+      // Cargar datos adicionales en paralelo
+      const [adicionesData, modificacionesData, seguimientoData] = await Promise.all([
+        adicionesApi.getByContrato(parseInt(contratoId)).catch(() => []),
+        modificacionesApi.getByContrato(parseInt(contratoId)).catch(() => []),
+        seguimientoGeneralApi.getByContrato(parseInt(contratoId)).catch(() => [])
+      ]);
+
+      setContrato(contratoFormateado);
+      
+      // Transformar adiciones de la API al formato local
+      const adicionesFormateadas = adicionesData.map((adicion: unknown) => {
+        const a = adicion as Record<string, unknown>;
+        return ({
+          ADI_ID: Number(a.id),
+          ADI_CON_ID: Number(a.contratoId),
+          ADI_VALOR_ADICION: Number(a.valorAdicion),
+          ADI_FECHA: String(a.fecha),
+          ADI_OBSERVACIONES: String(a.observaciones || "")
+        });
+      });
+      
+      // Transformar modificaciones de la API al formato local
+      const modificacionesFormateadas = modificacionesData.map((modificacion: unknown) => {
+        const m = modificacion as Record<string, unknown>;
+        return ({
+          MOD_ID: Number(m.id),
+          MOD_CON_ID: Number(m.contratoId),
+          MOD_TIPO: String(m.tipo),
+          MOD_DURACION: Number(m.duracion),
+          MOD_OBSERVACIONES: String(m.observaciones || "")
+        });
+      });
+      
+      setAdiciones(adicionesFormateadas);
+      setModificaciones(modificacionesFormateadas);
+      
+      // Convertir seguimiento del backend al formato frontend
+      if (seguimientoData[0]) {
+        const seguimientoFormateado = {
+          SEG_ID: seguimientoData[0].id,
+          SEG_CON_ID: seguimientoData[0].contratoId,
+          SEG_AVANCE_FINANCIERO: seguimientoData[0].avanceFinanciero,
+          SEG_AVANCE_FISICO: seguimientoData[0].avanceFisico,
+          SEG_OBSERVACIONES: seguimientoData[0].observaciones || ""
+        };
+        setSeguimiento(seguimientoFormateado);
+      } else {
+        setSeguimiento(null);
+      }
+      
+    } catch (error) {
+      console.error('Error cargando datos del contrato desde la base de datos:', error);
+      // No hay fallback - si falla la API, redirigir al home
+      router.push('/home');
+      return;
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
 
   // Cargar datos del contrato
   useEffect(() => {
@@ -171,30 +170,13 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
         router.push('/home');
         return;
       }
-      setTimeout(() => {
-        const contratoEncontrado = sscData.contratos.find(c => c.CON_ID.toString() === contratoId);
-        
-        if (!contratoEncontrado) {
-          router.push('/home');
-          return;
-        }
-
-        const adicionesContrato = sscData.adiciones.filter(a => a.ADI_CON_ID.toString() === contratoId);
-        const modificacionesContrato = sscData.modificaciones.filter(m => m.MOD_CON_ID.toString() === contratoId);
-        const seguimientoContrato = sscData.seguimiento_general.find(s => s.SEG_CON_ID.toString() === contratoId);
-
-        setContrato(contratoEncontrado);
-        setAdiciones(adicionesContrato);
-        setModificaciones(modificacionesContrato);
-        setSeguimiento(seguimientoContrato || null);
-        setLoading(false);
-      }, 500);
+      loadContractData(contratoId);
 
     } catch (error) {
       console.error('Error al cargar datos:', error);
       router.push('/');
     }
-  }, [router, contratoId]);
+  }, [router, contratoId, loadContractData]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -229,6 +211,19 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
   const calcularCostoEjecutado = () => {
     if (!contrato || !seguimiento) return 0;
     return Math.round((contrato.CON_VALOR_TOTAL * seguimiento.SEG_AVANCE_FINANCIERO) / 100);
+  };
+
+  // Función para manejar el éxito al agregar adición
+  const handleAdicionSuccess = () => {
+    if (contratoId) {
+      // Recargar los datos del contrato para mostrar la nueva adición
+      loadContractData(contratoId);
+    }
+    setShowAgregarAdicion(false);
+  };
+
+  const handleBackFromAdicion = () => {
+    setShowAgregarAdicion(false);
   };
 
   if (loading || !usuario) {
@@ -632,7 +627,7 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
               
               <div className="mt-4 text-center">
                 <button 
-                  onClick={() => router.push(`/agregar-adicion?contrato=${contrato.CON_ID}`)}
+                  onClick={() => setShowAgregarAdicion(true)}
                   className={`${workSans.className} bg-sky-600 hover:bg-sky-700 text-white px-6 py-2 rounded-full transition-colors flex items-center space-x-2 mx-auto align-middle`}
                   style={{
                     fontWeight: 600,
@@ -742,7 +737,7 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
               
               <div className="mt-4 text-center">
                 <button 
-                  onClick={() => router.push(`/agregar-modificacion?contrato=${contrato.CON_ID}`)}
+                  onClick={() => setShowAgregarModificacion(true)}
                   className={`${workSans.className} bg-blue-900 hover:bg-blue-950 text-white px-6 py-2 rounded-full transition-colors flex items-center space-x-2 mx-auto align-middle`}
                   style={{
                     fontWeight: 600,
@@ -883,6 +878,33 @@ export default function ContratosPage({ onBackToHome }: ContratosPageProps = {})
           </div>
         </div>
       </main>
+
+      {/* Modal para Agregar Adición */}
+      {showAgregarAdicion && contratoId && (
+        <div className="fixed inset-0 z-50">
+          <AgregarAdicionPage 
+            contratoId={contratoId}
+            onBackToHome={handleBackFromAdicion}
+            onSuccess={handleAdicionSuccess}
+          />
+        </div>
+      )}
+
+              {/* Modal para Agregar Modificación */}
+        {showAgregarModificacion && contratoId && (
+          <div className="fixed inset-0 z-50">
+            <AgregarModificacionPage 
+              contratoId={contratoId}
+              onBackToHome={() => setShowAgregarModificacion(false)}
+              onModificacionCreated={() => {
+                if (contratoId) {
+                  loadContractData(contratoId);
+                }
+                setShowAgregarModificacion(false);
+              }}
+            />
+          </div>
+        )}
     </div>
   );
 } 

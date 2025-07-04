@@ -12,40 +12,7 @@ const workSans = Work_Sans({
 });
 
 // Datos del sistema SSC
-const sscData = {
-  "cuos": [
-    {
-      "CUO_ID": 1,
-      "CUO_CON_ID": 1,
-      "CUO_NRO": "CUO-001-IV",
-      "CUO_LATITUD": 6.2442,
-      "CUO_LONGITUD": -75.5812,
-      "CUO_COMUNA": "Comuna 10 - La Candelaria",
-      "CUO_BARRIO": "Centro",
-      "CUO_DESCRIPCION": "Centro urbano principal para gestión de infraestructura verde en el centro de la ciudad"
-    },
-    {
-      "CUO_ID": 2,
-      "CUO_CON_ID": 1,
-      "CUO_NRO": "CUO-002-IV",
-      "CUO_LATITUD": 6.2518,
-      "CUO_LONGITUD": -75.5636,
-      "CUO_COMUNA": "Comuna 4 - Aranjuez",
-      "CUO_BARRIO": "Aranjuez",
-      "CUO_DESCRIPCION": "Centro de operaciones para la zona norte, gestión de parques y zonas verdes"
-    },
-    {
-      "CUO_ID": 3,
-      "CUO_CON_ID": 2,
-      "CUO_NRO": "CUO-001-MS",
-      "CUO_LATITUD": 6.2486,
-      "CUO_LONGITUD": -75.5647,
-      "CUO_COMUNA": "Comuna 10 - La Candelaria",
-      "CUO_BARRIO": "Prado",
-      "CUO_DESCRIPCION": "Centro de operaciones para construcción de ciclorrutas sector A"
-    }
-  ]
-};
+// Datos hardcodeados eliminados - ahora se debe usar la API real
 
 // Interfaces
 interface CUO {
@@ -66,10 +33,22 @@ interface FrenteObraPageProps {
 
 export default function FrenteObraPage({ contratoId, onBackToContract }: FrenteObraPageProps) {
   // Estados
-  const [userRole] = useState('supervisor');
+  const [usuario, setUsuario] = useState<any>(null);
   const [selectedCUO, setSelectedCUO] = useState<CUO | null>(null);
   const [cuos, setCuos] = useState<CUO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Cargar datos del usuario desde localStorage
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        setUsuario(JSON.parse(userData));
+      } catch (error) {
+        console.error('Error al cargar datos del usuario:', error);
+      }
+    }
+  }, []);
 
   // Handlers
   const handleLogout = () => {
@@ -82,18 +61,39 @@ export default function FrenteObraPage({ contratoId, onBackToContract }: FrenteO
     setSelectedCUO(null);
   };
 
-  // Cargar CUOs del contrato
+  // Cargar CUOs del contrato desde la API real
   useEffect(() => {
     if (!contratoId) return;
 
-    setIsLoading(true);
-    setTimeout(() => {
-      const cuosDelContrato = sscData.cuos.filter(cuo => 
-        cuo.CUO_CON_ID.toString() === contratoId
-      );
-      setCuos(cuosDelContrato);
-      setIsLoading(false);
-    }, 1000);
+    const loadCuos = async () => {
+      setIsLoading(true);
+      try {
+        // Importar la API dinámicamente para evitar problemas de SSR
+        const { cuoApi } = await import('@/lib/api');
+        const cuosData = await cuoApi.getCuosByContrato(parseInt(contratoId));
+        
+        // Mapear datos de la API al formato del frontend (usando el formato real del backend)
+        const cuosFormateados = cuosData.map((cuo: any) => ({
+          CUO_ID: cuo.id,
+          CUO_CON_ID: cuo.contratoId,
+          CUO_NRO: cuo.nroCuo || cuo.numero,
+          CUO_LATITUD: cuo.latitud,
+          CUO_LONGITUD: cuo.longitud,
+          CUO_COMUNA: cuo.comuna,
+          CUO_BARRIO: cuo.barrio,
+          CUO_DESCRIPCION: cuo.descripcion
+        }));
+        
+        setCuos(cuosFormateados);
+      } catch (error) {
+        console.error('Error cargando CUOs reales:', error);
+        setCuos([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCuos();
   }, [contratoId]);
 
   // Loading state
@@ -145,7 +145,7 @@ export default function FrenteObraPage({ contratoId, onBackToContract }: FrenteO
 
               <div className="flex flex-col items-end space-y-2">
                 <span className="text-white text-base">
-                  Bienvenido, {userRole}
+                  Bienvenido, {usuario?.USU_NOMBRE || 'Usuario'}
                 </span>
                 <button
                   onClick={handleLogout}
@@ -217,7 +217,7 @@ export default function FrenteObraPage({ contratoId, onBackToContract }: FrenteO
 
             <div className="flex flex-col items-end space-y-2">
               <span className="text-white text-base">
-                Bienvenido, {userRole}
+                Bienvenido, {usuario?.USU_NOMBRE || 'Usuario'}
               </span>
               <button
                 onClick={handleLogout}

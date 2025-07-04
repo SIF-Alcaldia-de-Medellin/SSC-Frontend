@@ -2,45 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { Work_Sans } from 'next/font/google';
+import { actividadesApi, seguimientoActividadApi } from '@/lib/api';
 
 const workSans = Work_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
 });
-
-// Datos del sistema SSC
-const sscData = {
-  "seguimiento_actividades": [
-    {
-      "SEG_ID": 1,
-      "SEG_ACT_ID": 1,
-      "SEG_AVANCE_FISICO": 45.5,
-      "SEG_COSTO_APROXIMADO": 202500000,
-      "SEG_CREATED_AT": "2025-01-20T14:30:00Z",
-      "SEG_DESCRIPCION_SEGUIMIENTO": "Avance satisfactorio en mantenimiento de zonas verdes. Se han intervenido 1125 m² de los 2500 programados.",
-      "SEG_PROYECCION_ACTIVIDADES": "Se espera completar el 60% para fin de mes con buen clima."
-    },
-    {
-      "SEG_ID": 2,
-      "SEG_ACT_ID": 2,
-      "SEG_AVANCE_FISICO": 30.0,
-      "SEG_COSTO_APROXIMADO": 60000000,
-      "SEG_CREATED_AT": "2025-01-20T14:30:00Z",
-      "SEG_DESCRIPCION_SEGUIMIENTO": "Instalación de mobiliario urbano iniciada. 45 de 150 unidades instaladas.",
-      "SEG_PROYECCION_ACTIVIDADES": "Cronograma normal, entrega de materiales según programación."
-    }
-  ],
-  "actividades": [
-    {
-      "ACT_ID": 1,
-      "ACT_PROYECTADO_FINANCIERO": 450000000
-    },
-    {
-      "ACT_ID": 2,
-      "ACT_PROYECTADO_FINANCIERO": 200000000
-    }
-  ]
-};
 
 // Interfaces
 interface ActividadData {
@@ -79,65 +46,78 @@ export default function SeguimientoAvance({
   // Estados de formulario
   const [descripcion, setDescripcion] = useState("");
   const [actividadesProyectadas, setActividadesProyectadas] = useState("");
+  const [costoAproximado, setCostoAproximado] = useState("");
+  const [avanceFisicoInput, setAvanceFisicoInput] = useState("");
   
   // Estados de datos
   const [costoAcumulado, setCostoAcumulado] = useState("0");
-  const [costoTotal, setCostoTotal] = useState("0");
-  const [avanceFisico, setAvanceFisico] = useState(0);
+  const [avanceFisicoAcumulado, setAvanceFisicoAcumulado] = useState(0);
   
   // Estados de control
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   // Cargar datos cuando cambia actividadData
   useEffect(() => {
     if (actividadData) {
       setCostoAcumulado(actividadData.costoAcumulado.toLocaleString('es-CO'));
-      setCostoTotal(actividadData.costoTotal.toLocaleString('es-CO'));
-      setAvanceFisico(actividadData.avanceFisicoAcumulado);
+      setAvanceFisicoAcumulado(actividadData.avanceFisicoAcumulado);
       setDescripcion(actividadData.descripcionAnterior || "");
       setActividadesProyectadas(actividadData.actividadesProyectadasAnteriores || "");
       setError(null);
     }
   }, [actividadData]);
 
-  // Cargar datos del sistema SSC
+  // Cargar datos de la API real
   useEffect(() => {
     if (actividadId && !actividadData) {
       fetchActividadData(actividadId);
     }
   }, [actividadId, actividadData]);
 
-  // Obtener datos de actividad
+  // Obtener datos reales de actividad y seguimiento
   const fetchActividadData = async (id: string) => {
     try {
+      setIsLoadingData(true);
       setError(null);
       
-      const seguimiento = sscData.seguimiento_actividades.find(seg => 
-        seg.SEG_ACT_ID.toString() === id
-      );
+      // Obtener datos de la actividad
+      const actividad = await actividadesApi.getById(parseInt(id));
       
-      const actividad = sscData.actividades.find(act => 
-        act.ACT_ID.toString() === id
-      );
-      
-      setTimeout(() => {
-        if (seguimiento && actividad) {
-          setCostoAcumulado(seguimiento.SEG_COSTO_APROXIMADO.toLocaleString('es-CO'));
-          setCostoTotal(actividad.ACT_PROYECTADO_FINANCIERO.toLocaleString('es-CO'));
-          setAvanceFisico(seguimiento.SEG_AVANCE_FISICO);
-          setDescripcion(seguimiento.SEG_DESCRIPCION_SEGUIMIENTO || "");
-          setActividadesProyectadas(seguimiento.SEG_PROYECCION_ACTIVIDADES || "");
+      try {
+        // Intentar obtener seguimientos existentes para esta actividad
+        const seguimientos = await seguimientoActividadApi.getByActividad(parseInt(id));
+        
+        if (seguimientos && seguimientos.length > 0) {
+          // Usar el seguimiento más reciente
+          const ultimoSeguimiento = seguimientos[seguimientos.length - 1];
+          
+          setCostoAcumulado(ultimoSeguimiento.costoAproximado.toLocaleString('es-CO'));
+          setAvanceFisicoAcumulado(ultimoSeguimiento.avanceFisico);
+          setDescripcion(ultimoSeguimiento.descripcionSeguimiento || "");
+          setActividadesProyectadas(ultimoSeguimiento.proyeccionActividades || "");
         } else {
-          setCostoAcumulado((Math.floor(Math.random() * 50000000) + 10000000).toLocaleString('es-CO'));
-          setCostoTotal((100000000).toLocaleString('es-CO'));
-          setAvanceFisico(Math.floor(Math.random() * 80) + 10);
+          // No hay seguimientos previos, usar valores por defecto
+          setCostoAcumulado("0");
+          setAvanceFisicoAcumulado(0);
+          setDescripcion("");
+          setActividadesProyectadas("");
         }
-      }, 1000);
+      } catch (seguimientoError) {
+        console.log("No se encontraron seguimientos previos para esta actividad");
+        // Valores por defecto si no hay seguimientos
+        setCostoAcumulado("0");
+        setAvanceFisicoAcumulado(0);
+        setDescripcion("");
+        setActividadesProyectadas("");
+      }
       
     } catch (err) {
       setError("Error al cargar los datos de la actividad");
       console.error("Error fetching actividad data:", err);
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -148,24 +128,61 @@ export default function SeguimientoAvance({
     setError(null);
 
     try {
-      const submitData = {
-        actividadId: actividadId || "",
-        costoAcumulado,
-        avanceFisico,
-        descripcion,
-        actividadesProyectadas
+      if (!actividadId) {
+        throw new Error("ID de actividad requerido");
+      }
+
+      // Validaciones
+      if (!costoAproximado || parseFloat(costoAproximado) < 0) {
+        throw new Error("El costo aproximado debe ser un número válido mayor o igual a 0");
+      }
+
+      if (!avanceFisicoInput || parseFloat(avanceFisicoInput) < 0) {
+        throw new Error("El avance físico debe ser un número válido mayor o igual a 0");
+      }
+
+      if (!descripcion.trim()) {
+        throw new Error("La descripción del seguimiento es requerida");
+      }
+
+      if (!actividadesProyectadas.trim()) {
+        throw new Error("Las actividades proyectadas son requeridas");
+      }
+
+      // Preparar datos para enviar (el backend genera fechaRegistro automáticamente)
+      const seguimientoData = {
+        actividadId: parseInt(actividadId),
+        avanceFisico: parseFloat(avanceFisicoInput),
+        costoAproximado: parseFloat(costoAproximado),
+        descripcionSeguimiento: descripcion.trim(),
+        proyeccionActividades: actividadesProyectadas.trim()
       };
 
+      // Crear nuevo seguimiento
+      await seguimientoActividadApi.create(seguimientoData);
+
+      // Actualizar los valores acumulados localmente
+      setCostoAcumulado(parseFloat(costoAproximado).toLocaleString('es-CO'));
+      setAvanceFisicoAcumulado(parseFloat(avanceFisicoInput));
+
+      // Limpiar formulario
+      setCostoAproximado("");
+      setAvanceFisicoInput("");
+      
       if (onSubmit) {
-        await onSubmit(submitData);
-      } else {
-        console.log("Enviando datos:", submitData);
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await onSubmit({
+          actividadId,
+          costoAcumulado: costoAproximado,
+          avanceFisico: parseFloat(avanceFisicoInput),
+          descripcion,
+          actividadesProyectadas
+        });
       }
       
       alert("Seguimiento guardado exitosamente");
-    } catch (err) {
-      setError("Error al guardar el seguimiento");
+    } catch (err: any) {
+      const errorMessage = err.message || "Error al guardar el seguimiento";
+      setError(errorMessage);
       console.error("Error submitting data:", err);
     } finally {
       setIsSubmitting(false);
@@ -173,7 +190,7 @@ export default function SeguimientoAvance({
   };
 
   // Loading state
-  if (isLoading) {
+  if (isLoading || isLoadingData) {
     return (
       <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-4xl mx-auto">
         <div className="animate-pulse">
@@ -257,7 +274,12 @@ export default function SeguimientoAvance({
                </label>
                              <input
                  type="number"
+                 value={costoAproximado}
+                 onChange={(e) => setCostoAproximado(e.target.value)}
                  placeholder="0"
+                 min="0"
+                 step="0.01"
+                 required
                  className="w-full px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-green-500 focus:border-transparent text-center"
                />
             </div>
@@ -281,7 +303,7 @@ export default function SeguimientoAvance({
               Acumulado:
             </h3>
             <p className="text-center text-4xl font-bold text-orange-600 mb-4">
-              {avanceFisico}m
+              {avanceFisicoAcumulado}m
             </p>
             
             <div className="border-t border-gray-300 pt-4">
@@ -300,7 +322,12 @@ export default function SeguimientoAvance({
                </label>
                              <input
                  type="number"
+                 value={avanceFisicoInput}
+                 onChange={(e) => setAvanceFisicoInput(e.target.value)}
                  placeholder="0"
+                 min="0"
+                 step="0.01"
+                 required
                  className="w-full px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-orange-500 focus:border-transparent text-center"
                />
             </div>
@@ -365,7 +392,7 @@ export default function SeguimientoAvance({
                onClick={onBackToActividades}
                className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-6 py-2 rounded-full transition-colors duration-200"
              >
-               Volver a Actividades
+               ← Volver a Frentes de Obra
              </button>
            )}
            <button

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Work_Sans } from 'next/font/google';
 import logoMedellin from '@/assets/Logo-Medellin-new.png';
+import { modificacionesApi, contratosApi } from '@/lib/api';
 
 const workSans = Work_Sans({
   subsets: ['latin'],
@@ -12,20 +13,62 @@ const workSans = Work_Sans({
 });
 
 interface AgregarModificacionPageProps {
+  contratoId?: string | null;
   onBackToHome?: () => void;
+  onModificacionCreated?: () => void;
 }
 
-export default function AgregarModificacionPage({ onBackToHome }: AgregarModificacionPageProps = {}) {
-  const [userRole] = useState('supervisor');
+export default function AgregarModificacionPage({ contratoId, onBackToHome, onModificacionCreated }: AgregarModificacionPageProps) {
+  const [usuario, setUsuario] = useState<any>(null);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const contratoId = searchParams.get('contrato');
+  const [loading, setLoading] = useState(false);
+  const [contrato, setContrato] = useState<any>(null);
+
+  // Cargar datos del usuario desde localStorage
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        setUsuario(JSON.parse(userData));
+      } catch (error) {
+        console.error('Error al cargar datos del usuario:', error);
+      }
+    }
+  }, []);
   const [formData, setFormData] = useState({
-    tipoModificacion: '',
-    fechasInicio: '2025-06-24',
-    fechasFinal: '2025-07-24',
+    tipo: '',
+    fechaInicio: '',
+    fechaFinal: '',
     observaciones: ''
   });
+
+  // Calcular duración en días
+  const calculateDuration = () => {
+    if (formData.fechaInicio && formData.fechaFinal) {
+      const inicio = new Date(formData.fechaInicio);
+      const final = new Date(formData.fechaFinal);
+      const diffTime = final.getTime() - inicio.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays > 0 ? diffDays : 0;
+    }
+    return 0;
+  };
+
+  // Cargar datos del contrato si existe contratoId
+  useEffect(() => {
+    const loadContrato = async () => {
+      if (contratoId) {
+        try {
+          const contratoData = await contratosApi.getContrato(parseInt(contratoId));
+          setContrato(contratoData);
+        } catch (error) {
+          console.error('Error al cargar contrato:', error);
+        }
+      }
+    };
+
+    loadContrato();
+  }, [contratoId]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -58,24 +101,68 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validaciones básicas
-    if (!formData.tipoModificacion || !formData.fechasInicio || !formData.fechasFinal) {
+    if (!formData.tipo || !formData.fechaInicio || !formData.fechaFinal) {
       alert('Por favor complete todos los campos obligatorios');
       return;
     }
 
-    // Simular guardado de modificación
-    console.log('Guardando modificación:', {
-      contratoId,
-      ...formData
-    });
+    // Validar que la fecha final sea posterior a la inicial
+    if (new Date(formData.fechaFinal) <= new Date(formData.fechaInicio)) {
+      alert('La fecha final debe ser posterior a la fecha de inicio');
+      return;
+    }
 
-    // Mostrar confirmación y regresar al contrato
-    alert('Modificación guardada exitosamente');
-    handleBackToHome();
+    if (!contratoId) {
+      alert('Error: No se ha especificado el contrato');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Preparar datos para enviar (el backend calcula la duración automáticamente)
+      const modificacionData = {
+        contratoId: parseInt(contratoId),
+        tipo: formData.tipo,
+        fechaInicio: formData.fechaInicio,
+        fechaFinal: formData.fechaFinal,
+        observaciones: formData.observaciones || ''
+      };
+
+      console.log('Enviando modificación:', modificacionData);
+
+      // Crear modificación usando la API real
+      await modificacionesApi.create(modificacionData);
+
+      // Mostrar confirmación
+      alert('Modificación guardada exitosamente');
+      
+      // Limpiar formulario
+      setFormData({
+        tipo: '',
+        fechaInicio: '',
+        fechaFinal: '',
+        observaciones: ''
+      });
+
+      // Notificar al componente padre si hay callback
+      if (onModificacionCreated) {
+        onModificacionCreated();
+      }
+
+      // Regresar al contrato
+      handleBackToHome();
+
+    } catch (error: any) {
+      console.error('Error al guardar modificación:', error);
+      alert(`Error al guardar la modificación: ${error.message || 'Error desconocido'}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -95,13 +182,13 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
         </div>
       </div>
 
-
-              <header className="bg-blue-900 px-6 py-4 relative z-10">
+      <header className="bg-blue-900 px-6 py-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={handleBackToHome}
-              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
+              disabled={loading}
+              className="bg-blue-700 hover:bg-blue-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -138,7 +225,7 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
 
           <div className="flex flex-col items-end space-y-2">
             <span className="text-white text-base">
-              Bienvenido, {userRole}
+              Bienvenido, {usuario?.USU_NOMBRE || 'Usuario'}
             </span>
             <button
               onClick={handleLogout}
@@ -154,7 +241,7 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
       <main className="px-8 py-8 relative z-10">
         <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-6xl mx-auto">
           <h2 
-            className={`${workSans.className} text-gray-800 text-center mb-8 align-middle`}
+            className={`${workSans.className} text-gray-800 text-center mb-4 align-middle`}
             style={{
               fontWeight: 700,
               fontSize: '48.83px',
@@ -167,6 +254,18 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
             Agregar Modificación
           </h2>
 
+          {/* Mostrar información del contrato si está disponible */}
+          {contrato && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h3 className="font-semibold text-blue-800 mb-2">Información del Contrato</h3>
+              <p className="text-blue-700">
+                <strong>Número:</strong> {contrato.numeroContrato} | 
+                <strong> Contratista:</strong> {contrato.contratista} | 
+                <strong> Objeto:</strong> {contrato.objeto}
+              </p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* LAYOUT HORIZONTAL ALARGADO: Tipo | Fechas | Duración */}
             <div className="flex items-center space-x-8 bg-gray-50 p-6 rounded-lg">
@@ -177,15 +276,16 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
                   <span className="text-red-600 text-xl font-bold">*</span> Tipo de modificación
                 </label>
                 <select
-                  name="tipoModificacion"
-                  value={formData.tipoModificacion}
+                  name="tipo"
+                  value={formData.tipo}
                   onChange={handleInputChange}
+                  required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 text-lg font-medium"
                 >
                   <option value="">Seleccionar</option>
-                  <option value="1">Tipo 1</option>
-                  <option value="2">Tipo 2</option>
-                  <option value="3">Tipo 3</option>
+                  <option value="MODIFICACION">MODIFICACION</option>
+                  <option value="PRORROGA">PRORROGA</option>
+                  <option value="SUSPENSION">SUSPENSION</option>
                 </select>
               </div>
 
@@ -200,9 +300,10 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
                   </label>
                   <input
                     type="date"
-                    name="fechasInicio"
-                    value={formData.fechasInicio}
+                    name="fechaInicio"
+                    value={formData.fechaInicio}
                     onChange={handleInputChange}
+                    required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-lg font-medium"
                   />
                 </div>
@@ -213,9 +314,10 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
                   </label>
                   <input
                     type="date"
-                    name="fechasFinal"
-                    value={formData.fechasFinal}
+                    name="fechaFinal"
+                    value={formData.fechaFinal}
                     onChange={handleInputChange}
+                    required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-lg font-medium"
                   />
                 </div>
@@ -228,7 +330,9 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
               <div className="flex-1 flex items-center justify-center">
                 <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-8 text-center w-full h-32 flex flex-col justify-center">
                   <div className="text-purple-700 font-bold text-xl mb-2">Duración</div>
-                  <div className="text-purple-600 font-bold text-3xl">30 días</div>
+                  <div className="text-purple-600 font-bold text-3xl">
+                    {calculateDuration()} días
+                  </div>
                 </div>
               </div>
 
@@ -253,9 +357,20 @@ export default function AgregarModificacionPage({ onBackToHome }: AgregarModific
             <div className="flex justify-end pt-4">
               <button
                 type="submit"
-                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors font-medium"
+                disabled={loading}
+                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full transition-colors font-medium flex items-center space-x-2"
               >
-                Enviar
+                {loading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Guardando...</span>
+                  </>
+                ) : (
+                  <span>Enviar</span>
+                )}
               </button>
             </div>
           </form>
