@@ -11,6 +11,7 @@ export const useAuth = () => {
     const router = useRouter();
 
     useEffect(() => {
+        setLoading(true);
         const initializeAuth = async () => {
             try {
                 // Si ya hay un usuario en el contexto, no necesitamos validar
@@ -31,6 +32,7 @@ export const useAuth = () => {
                 localStorage.removeItem('user');
             } finally {
                 setIsInitialized(true);
+                setLoading(false)
             }
         };
 

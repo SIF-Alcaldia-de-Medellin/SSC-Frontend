@@ -10,19 +10,11 @@ import { faFileLines, faListCheck, faPlus } from '@fortawesome/free-solid-svg-ic
 import { useContratoInfo } from '@/hooks/useContratoInfo';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-const {  seguimiento_general} = sscData
-
-console.log(seguimiento_general);
-
 export default function ContratosPage() {
   const router = useRouter();
   const { id } = useParams();
-  const { loading, error, contrato, modificaciones, adiciones } = useContratoInfo(Number(id));
+  const { loading, error, contrato, modificaciones, adiciones, seguimientoGeneral } = useContratoInfo(Number(id));
 
-  console.log(contrato)
- 
-  const seguimientoGeneral = seguimiento_general[seguimiento_general.length - 1];
-  
   const handleSeguimientoGeneral = () => {
     router.push(`/contratos/${id}/seguimiento-general`);
   }
@@ -129,14 +121,14 @@ export default function ContratosPage() {
             <section className='flex justify-center items-center w-full gap-[20px]'>
               <div className='flex flex-col gap-[10px] w-[calc(50%-10px)] text-center'>
                 <h6 className='font-semibold text-[20px]'>Coste total de obra ejecutada:</h6>
-                <h2 className='text-[55px] font-extrabold'>{formatCurrency(seguimientoGeneral.valorEjecutado)}</h2>
+                <h2 className='text-[55px] font-extrabold'>{formatCurrency(Number(seguimientoGeneral?.valorEjecutado.toFixed(0)))}</h2>
                 <button className='bg-[#3366CC] hover:bg-[#2A55AA] text-white px-[20px] py-[20px] rounded-2xl cursor-pointer text-[20px] font-semibold self-center w-[90%] flex items-center justify-center gap-[10px]'>
                   <FontAwesomeIcon icon={faFileLines} className='text-[36px]' /> Realizar Seguimiento General
                 </button>
               </div>
               <div className='flex flex-col gap-[10px] w-[calc(50%-10px)] text-center'>
                 <h6 className='font-semibold text-[20px]'>Total de obra ejecutada:</h6>
-                <h2 className='text-[55px] font-extrabold'>{seguimientoGeneral.avanceFisico.toFixed(2)}%</h2>
+                <h2 className='text-[55px] font-extrabold'>{seguimientoGeneral?.avanceFisico}%</h2>
                 <button className='bg-[#FF8403] hover:bg-[#D76E00] text-white px-[20px] py-[20px] rounded-2xl cursor-pointer text-[20px] font-semibold  self-center w-[90%] flex items-center justify-center gap-[10px]' onClick={handleSeguimientoPorActividad}>
                   <FontAwesomeIcon icon={faListCheck} className='text-[36px]' /> Realizar Seguimiento Por Actividad
                 </button>

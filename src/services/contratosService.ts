@@ -58,6 +58,30 @@ export interface Modificacion {
     }
 }
 
+export interface SeguimientoGenral{
+    id: number;
+    contratoId: number;
+    contrato: {
+      numeroContrato: string;
+      identificadorSimple: string;
+      objeto: string;
+      valorTotal: number;
+      fechaTerminacionActual: string;
+      estado: string;
+    },
+    valorEjecutadoIndividual: number;
+    valorEjecutado: number;
+    avanceFinanciero: number;
+    avanceFisicoIndividual: number;
+    avanceFisico: number;
+    createdAt: string;
+    fechaUltimaModificacion: string;
+    observaciones: string;
+    diferenciaAvance: number;
+    estadoAvance: string;
+    resumenEstado: string;
+}
+
 export const contratoService = {
     async getContratos(): Promise<Contrato[]>{
         return apiClient.get('/contratos')
@@ -70,5 +94,8 @@ export const contratoService = {
     },
     async getModificacionesByContratoId(id: number): Promise<Modificacion[]>{
         return apiClient.get(`/modificaciones/contrato/${id}`)
+    },
+    async getSeguimeintosGeneralesByContratoId(id: number): Promise<SeguimientoGenral[]>{
+        return apiClient.get(`/seguimiento-general/contrato/${id}`)
     },
 };

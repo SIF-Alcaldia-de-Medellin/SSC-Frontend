@@ -35,7 +35,7 @@ export default function SeguimientoActividadActividadesPage() {
                         <div className='flex flex-wrap gap-[20px] justify-center items-center w-full'>
                             {actividadesCuo.map((actividad, index) => (
                                 <Card 
-                                    className={"w-[calc(1/3*100%-20px)] " + (index % 2 == 0 ? 'bg-[#0091C7]' : 'bg-[#42A9FF]')} 
+                                    className={"w-[calc(1/3*100%-20px)] max-w-[calc(1/3*100%-20px)] " + (index % 2 == 0 ? 'bg-[#0091C7]' : 'bg-[#42A9FF]')} 
                                     key={actividad.id} 
                                     title={`${actividad.actividad}`} 
                                     subtitle={actividad.unidadesAvance} 

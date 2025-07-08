@@ -35,7 +35,7 @@ export default function SeguimientoActividadCuosPage() {
                     <div className='flex flex-wrap gap-[20px] justify-center items-center w-full'>
                         {cuos.map((cuo, index) => (
                             <Card 
-                                className={"max-w-[calc(1/3*100%-20px)] min-h-[250px] " + (index % 2 == 0 ? 'bg-[#006AC3]' : 'bg-[#00AEEF]')} 
+                                className={"max-w-[calc(1/3*100%-20px)] w-[calc(1/3*100%-20px)] min-h-[250px] " + (index % 2 == 0 ? 'bg-[#006AC3]' : 'bg-[#00AEEF]')} 
                                 key={cuo.id} 
                                 title={`CUO #${cuo.numero}`} 
                                 subtitle={cuo.comuna} 

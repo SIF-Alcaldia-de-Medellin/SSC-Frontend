@@ -61,7 +61,7 @@ export default function HomePage() {
               {/* Card */}
               {contratos?.map((contract: Contrato, index: number) => (
                 <Card 
-                  className={`max-w-[calc(1/3*100%-20px)] min-h-[250px] ` + (index % 2 == 0 ? 'bg-[#FF8403]' : 'bg-[#00CD6C]')} 
+                  className={`max-w-[calc(1/3*100%-20px)] min-h-[250px] w-[calc(1/3*100%-20px)] min-h-[250px] ` + (index % 2 == 0 ? 'bg-[#FF8403]' : 'bg-[#00CD6C]')} 
                   title={`Contrato #${contract.numeroContrato}`} 
                   subtitle={`Vigencia: ${contract.anoSuscripcion}`}
                   key={contract.id}
