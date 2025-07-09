@@ -58,28 +58,35 @@ export interface Modificacion {
     }
 }
 
-export interface SeguimientoGenral{
-    id: number;
-    contratoId: number;
-    contrato: {
+export interface SeguimientoGeneral{
+    id?: number;
+    contratoId?: number;
+    contrato?: {
       numeroContrato: string;
       identificadorSimple: string;
       objeto: string;
       valorTotal: number;
       fechaTerminacionActual: string;
       estado: string;
-    },
-    valorEjecutadoIndividual: number;
-    valorEjecutado: number;
+    } | Contrato,
+    valorEjecutadoIndividual?: number;
+    valorEjecutado?: number;
+    avanceFinanciero?: number;
+    avanceFisicoIndividual?: number;
+    avanceFisico?: number;
+    createdAt?: string;
+    fechaUltimaModificacion?: string;
+    observaciones?: string;
+    diferenciaAvance?: number;
+    estadoAvance?: string;
+    resumenEstado?: string;
+}
+
+export interface SeguimientoGeneralForm{
+    contratoId: number;
     avanceFinanciero: number;
-    avanceFisicoIndividual: number;
     avanceFisico: number;
-    createdAt: string;
-    fechaUltimaModificacion: string;
     observaciones: string;
-    diferenciaAvance: number;
-    estadoAvance: string;
-    resumenEstado: string;
 }
 
 export const contratoService = {
@@ -95,7 +102,10 @@ export const contratoService = {
     async getModificacionesByContratoId(id: number): Promise<Modificacion[]>{
         return apiClient.get(`/modificaciones/contrato/${id}`)
     },
-    async getSeguimeintosGeneralesByContratoId(id: number): Promise<SeguimientoGenral[]>{
+    async getSeguimientosGeneralesByContratoId(id: number): Promise<SeguimientoGeneral[]>{
         return apiClient.get(`/seguimiento-general/contrato/${id}`)
     },
+    async uploadSeguimientoGeneral(seguimiento: SeguimientoGeneralForm): Promise<SeguimientoGeneral>{
+        return apiClient.post('/seguimiento-general', seguimiento)
+    }
 };

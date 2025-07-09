@@ -1,21 +1,24 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import sscData from "@/services/mocks/data";
 import Card from "@/components/Card";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Header from "@/components/Header";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/LoadingSpinner";
-
-const { cuos } = sscData;
+import BackButton from "@/components/BackButton";
+import { useCuos } from "@/hooks/useCuos";
+import { Cuo } from "@/services/cuosService";
 
 export default function SeguimientoActividadCuosPage() {
     const searchParams = useSearchParams()
     const router = useRouter();
     const contratoId = searchParams.get('contratoId')
 
-    const handleSelectCuo = (cuo: any) => {
-        router.push(`/seguimiento-actividad/cuos/${cuo.id}/actividades`);
+    const { loading, error, cuos } = useCuos(Number(contratoId));
+
+
+    const handleSelectCuo = (cuo: Cuo) => {
+        router.push(`/seguimiento-actividad/cuos/${cuo.id}/actividades?contratoId=${contratoId}`);
       }
 
     return (
@@ -26,21 +29,22 @@ export default function SeguimientoActividadCuosPage() {
                 <h1 className='text-[48.8px] font-bold text-center'>
                     ¿Que <span className='text-[#FF8403]'>Frente de Obra</span> deseas realizarle seguimiento?
                 </h1>
-                {Math.random() > 0.5 ? 
+                {loading ? 
                     (<>
-                    <LoadingSpinner hexColor="FF8403" />
+                    <LoadingSpinner hexColor="FF8403" className='fill-orange-500'/>
                     <p className='text-[20px] font-semibold text-center'>Cargando...</p>
                     </>) 
                     : 
                     <div className='flex flex-wrap gap-[20px] justify-center items-center w-full'>
-                        {cuos.map((cuo, index) => (
+                        {cuos?.map((cuo, index) => (
                             <Card 
                                 className={"max-w-[calc(1/3*100%-20px)] w-[calc(1/3*100%-20px)] min-h-[250px] " + (index % 2 == 0 ? 'bg-[#006AC3]' : 'bg-[#00AEEF]')} 
                                 key={cuo.id} 
-                                title={`CUO #${cuo.numero}`} 
+                                title={`${cuo.numero}`} 
                                 subtitle={cuo.comuna} 
                             >
-                                <p className='text-[16px] font-normal text-wrap'>{cuo.descripcion}</p>
+                                <p className='text-[16px] font-normal text-wrap h-[50px] w-full line-clamp-2'>{cuo.descripcion}</p>
+                                <p className=' font-light'><span className='font-semibold'>Barrio: </span>{cuo.barrio}</p>
                                 <div className='flex flex-col gap-[5px] self-end items-end'>
                                     <h6 className='text-white text-[20px] w-fit font-semibold'>
                                         Total Actividades: {cuo.cantidadActividades}
@@ -52,6 +56,7 @@ export default function SeguimientoActividadCuosPage() {
                     </div>
                 }
                 </div>
+                <BackButton color='orange' to={`/contratos/${contratoId}`} />
             </main>
         </ProtectedRoute>
     )

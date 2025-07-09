@@ -1,0 +1,52 @@
+import { useState, useEffect } from 'react';
+import { actividadesService, SeguimientoActividad, SeguimientoActividadForm } from '@/services/actividadesService';
+
+export const useActividadInfo = (id: number) => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [actividadInfoSeguimiento, setActividadInfoSeguimiento] = useState<SeguimientoActividad | null>(null);
+
+    const uploadSeguimientoActividad = async (seguimiento: SeguimientoActividadForm) => {
+        setLoading(true);
+        try {
+            const seguimientoActividad = await actividadesService.uploadSeguimientoActividad(seguimiento);
+            setActividadInfoSeguimiento(seguimientoActividad);
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar los seguimientos asociados a la actividad';
+            setError(errorMessage);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        const loadDataSeguimientoActividad = async () => {
+            setLoading(true);
+            try { 
+                const actividadInfoSeguimientos = await actividadesService.getSeguimientosActividadByActividadId(id);
+                const actividadInfoSeguimientoData = actividadInfoSeguimientos[0];
+                setActividadInfoSeguimiento(actividadInfoSeguimientoData);
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar los seguimientos asociados a la actividad';
+                if(errorMessage.includes("Error: No se encontraron seguimientos para la actividad")) {
+                    setError(errorMessage);
+                    throw err;
+                }else{
+                    const actividadInfo =  await actividadesService.getActividadById(id);
+                    setActividadInfoSeguimiento({
+                        ...actividadInfoSeguimiento,
+                        actividad: actividadInfo
+                    });
+                }
+            } finally {
+                setLoading(false)
+            }
+        };
+
+        loadDataSeguimientoActividad();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
+
+    return { loading, error, actividadInfoSeguimiento, uploadSeguimientoActividad };
+};
