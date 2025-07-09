@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Contrato, contratoService } from '@/services/contratosService';
+import { contratoService } from '@/services/contratosService';
+import { Contrato } from '@/types/contrato';
 
 export const useContratos = () => {
     const [loading, setLoading] = useState(false);

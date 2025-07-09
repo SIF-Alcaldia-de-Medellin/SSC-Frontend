@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { contratoService, SeguimientoGeneral, SeguimientoGeneralForm } from '@/services/contratosService';
+import { contratoService, SeguimientoGeneralForm } from '@/services/contratosService';
+import { SeguimientoGeneral } from '@/types/seguimiento_general';
 
 export const useSeguimientoGeneral = (id: number) => {
     const [loading, setLoading] = useState(false);

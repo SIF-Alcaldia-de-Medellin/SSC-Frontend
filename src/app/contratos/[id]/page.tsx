@@ -2,7 +2,6 @@
 import Header from '@/components/Header';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useParams, useRouter } from 'next/navigation';
-import sscData from '@/services/mocks/data';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { formatDate } from '@/utils/formatDate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,7 +15,13 @@ export default function ContratosPage() {
   const { id } = useParams();
   const { loading, error, contrato, modificaciones, adiciones, seguimientoGeneral } = useContratoInfo(Number(id));
 
-  console.log('Error: ',error)
+  const handleAgregarAdicion = () => {
+    router.push(`/contratos/${id}/agregar-adicion`);
+  }
+
+  const handleAgregarModificacion = () => {
+    router.push(`/contratos/${id}/agregar-modificacion`);
+  }
 
   const handleSeguimientoGeneral = () => {
     router.push(`/contratos/${id}/seguimiento-general`);
@@ -103,7 +108,7 @@ export default function ContratosPage() {
                     </div>
                   )}
                 </div>
-                <button className='bg-[#00AEEF] hover:bg-[#0091C7] text-white px-[20px] py-[10px] rounded-full w-fit self-end mr-4 cursor-pointer font-semibold'>
+                <button className='bg-[#00AEEF] hover:bg-[#0091C7] text-white px-[20px] py-[10px] rounded-full w-fit self-end mr-4 cursor-pointer font-semibold' onClick={handleAgregarAdicion}>
                   <FontAwesomeIcon icon={faPlus} /> Agregar Adición
                 </button>
               </div>
@@ -134,8 +139,8 @@ export default function ContratosPage() {
                     </div>
                   )}
                 </div>
-                <button className='bg-[#004884] hover:bg-[#003C6E] text-white px-[20px] py-[10px] rounded-full w-fit self-end mr-4 cursor-pointer font-semibold'>
-                  <FontAwesomeIcon icon={faPlus} /> Agregar Adición
+                <button className='bg-[#004884] hover:bg-[#003C6E] text-white px-[20px] py-[10px] rounded-full w-fit self-end mr-4 cursor-pointer font-semibold' onClick={handleAgregarModificacion}>
+                  <FontAwesomeIcon icon={faPlus} /> Agregar Modificación
                 </button>
               </div>
             </section>

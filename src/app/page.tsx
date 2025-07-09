@@ -8,7 +8,7 @@ import { formatCurrency } from '@/utils/formatCurrency';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useContratos } from '@/hooks/useContratos';
-import { Contrato } from '@/services/contratosService';
+import { Contrato } from '@/types/contrato';
 import { formatDate } from '@/utils/formatDate';
 
 export default function HomePage() {

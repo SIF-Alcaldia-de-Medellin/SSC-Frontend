@@ -7,7 +7,7 @@ interface PublicRouteProps {
   redirectIfAuthenticated?: string;
 }
 
-export default function PublicRoute({ children, redirectIfAuthenticated = '/dashboard' }: PublicRouteProps) {
+export default function PublicRoute({ children, redirectIfAuthenticated = '/' }: PublicRouteProps) {
   return (
     <AuthGuard requireAuth={false} redirectIfAuthenticated={redirectIfAuthenticated}>
       {children}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Cuo, cuoService } from '@/services/cuosService';
+import { Cuo } from '@/types/cuo';
+import { cuoService } from '@/services/cuosService';
 
 export const useCuos = (id: number) => {
     const [loading, setLoading] = useState(false);

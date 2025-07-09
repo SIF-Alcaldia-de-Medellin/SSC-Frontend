@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Actividad, actividadesService } from '@/services/actividadesService';
+import { Actividad } from '@/types/actividad';
+import { actividadesService } from '@/services/actividadesService';
 
 export const useActividades = (id: number) => {
     const [loading, setLoading] = useState(false);

@@ -2,15 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-
-export interface Usuario {
-    cedula: string;
-    email: string;
-    rol: string;
-    nombre: string;
-    mustChangePassword: boolean;
-    lastPasswordChange?: boolean;
-}
+import { Usuario } from '@/types/usuario';
 
 interface AuthContextType {
     user: Usuario | null;
@@ -24,7 +16,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<Usuario | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 

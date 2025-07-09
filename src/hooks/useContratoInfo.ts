@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Contrato, contratoService, Modificacion, Adicion, SeguimientoGenral } from '@/services/contratosService';
+import { contratoService } from '@/services/contratosService';
+import { Contrato } from '@/types/contrato';
+import { Modificacion } from '@/types/modificacion';
+import { Adicion } from '@/types/adicion';
+import { SeguimientoGeneral } from '@/types/seguimiento_general';
 
 export const useContratoInfo = (id: number) => {
     const [loading, setLoading] = useState(false);
@@ -7,7 +11,7 @@ export const useContratoInfo = (id: number) => {
     const [contrato, setContrato] = useState<Contrato | null>(null);
     const [adiciones, setAdiciones] = useState<Adicion[] | null>(null);
     const [modificaciones, setModificaciones] = useState<Modificacion[] | null>(null);
-    const [seguimientoGeneral, setSeguimientoGeneral] = useState<SeguimientoGenral | null>(null);
+    const [seguimientoGeneral, setSeguimientoGeneral] = useState<SeguimientoGeneral | null>(null);
 
     useEffect(() => {
         const loadContrato = async () => {

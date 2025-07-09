@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import BackButton from "@/components/BackButton";
 import { useCuos } from "@/hooks/useCuos";
-import { Cuo } from "@/services/cuosService";
+import { Cuo } from "@/types/cuo";
 
 export default function SeguimientoActividadCuosPage() {
     const searchParams = useSearchParams()

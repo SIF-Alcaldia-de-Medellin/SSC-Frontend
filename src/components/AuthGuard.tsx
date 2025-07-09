@@ -1,9 +1,9 @@
 "use client";
-
 import { useAuth } from '@/hooks/useAuth';
-import LoadingScreen from './LoadingScreen';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import LoadingSpinner from './LoadingSpinner';
+import Header from './Header';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -35,7 +35,10 @@ export default function AuthGuard({
 
   // Mostrar loading mientras se inicializa
   if (!isInitialized || loading) {
-    return <LoadingScreen />;
+    return <>
+      <Header />
+      <LoadingSpinner hexColor='00AEEF' className='fill-fuchsia-700' />
+    </>;
   }
 
   // Si requiere autenticación y no está autenticado, no mostrar nada (se redirigirá)

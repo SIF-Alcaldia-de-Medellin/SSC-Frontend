@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { actividadesService, SeguimientoActividad, SeguimientoActividadForm } from '@/services/actividadesService';
+import { actividadesService, SeguimientoActividadForm } from '@/services/actividadesService';
+import { SeguimientoActividad } from '@/types/seguimiento_actividad';
 
 export const useActividadInfo = (id: number) => {
     const [loading, setLoading] = useState(false);

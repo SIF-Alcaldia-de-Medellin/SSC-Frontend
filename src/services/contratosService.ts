@@ -1,91 +1,28 @@
 import { apiClient } from './api';
-
-export interface Contrato {
-    id: number;
-    usuarioCedula: string;
-    numeroContrato: string;
-    anoSuscripcion: number;
-    programa: string;
-    tipoContrato: string;
-    objeto: string;
-    identificadorSimple: string;
-    suplentes: string | null;
-    apoyo: string | null;
-    estado: string;
-    contratista: string;
-    numeroProceso: string;
-    fechaInicio: string;
-    fechaTerminacionInicial: string;
-    fechaTerminacionActual: string;
-    valorInicial: string;
-    valorTotal: string;
-    supervisor: {
-      cedula: string;
-      nombre: string;
-      email: string;
-    }
-}
-
-export interface Adicion {
-    id: number;
-    contratoId: number;
-    contrato: {
-      numeroContrato: string;
-      identificadorSimple: string;
-      objeto: string;
-      valorTotal: string;
-    };
-    valorAdicion: number;
-    fecha: string;
-    createdAt: string;
-    observaciones: string;
-}
-
-export interface Modificacion {
-    id: number;
-    contratoId: number;
-    tipo: string;
-    fechaInicio: string;
-    fechaFinal: string;
-    duracion: number;
-    createdAt: string;
-    observaciones: string;
-    contrato: {
-      numeroContrato: string;
-      identificadorSimple: string;
-      objeto: string;
-      fechaTerminacionActual: string;
-    }
-}
-
-export interface SeguimientoGeneral{
-    id?: number;
-    contratoId?: number;
-    contrato?: {
-      numeroContrato: string;
-      identificadorSimple: string;
-      objeto: string;
-      valorTotal: number;
-      fechaTerminacionActual: string;
-      estado: string;
-    } | Contrato,
-    valorEjecutadoIndividual?: number;
-    valorEjecutado?: number;
-    avanceFinanciero?: number;
-    avanceFisicoIndividual?: number;
-    avanceFisico?: number;
-    createdAt?: string;
-    fechaUltimaModificacion?: string;
-    observaciones?: string;
-    diferenciaAvance?: number;
-    estadoAvance?: string;
-    resumenEstado?: string;
-}
+import { SeguimientoGeneral } from '@/types/seguimiento_general';
+import { Contrato } from '@/types/contrato';
+import { Adicion } from '@/types/adicion';
+import { Modificacion } from '@/types/modificacion';
 
 export interface SeguimientoGeneralForm{
     contratoId: number;
     avanceFinanciero: number;
     avanceFisico: number;
+    observaciones: string;
+}
+
+export interface AdicionForm{
+    contratoId: number;
+    valorAdicion: number;
+    fecha: string;
+    observaciones: string;
+}
+
+export interface ModificacionForm{
+    contratoId: number;
+    tipo: string;
+    fechaInicio: string;
+    fechaFinal: string;
     observaciones: string;
 }
 
@@ -107,5 +44,11 @@ export const contratoService = {
     },
     async uploadSeguimientoGeneral(seguimiento: SeguimientoGeneralForm): Promise<SeguimientoGeneral>{
         return apiClient.post('/seguimiento-general', seguimiento)
+    },
+    async uploadAdicion(adicion: AdicionForm): Promise<Adicion>{
+        return apiClient.post('/adiciones', adicion)
+    },
+    async uploadModificacion(modificacion: ModificacionForm): Promise<Modificacion>{
+        return apiClient.post('/modificaciones', modificacion)
     }
 };
