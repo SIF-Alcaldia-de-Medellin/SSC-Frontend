@@ -12,6 +12,7 @@ import { Contrato } from '@/types/contrato';
 import { formatDate } from '@/utils/formatDate';
 import NoContent from '@/components/NoContent';
 import { useNotifier } from '@/context/NotifierContext';
+import { useEffect, useRef } from 'react';
 
 export default function HomePage() {
   const {loading, error, contratos} = useContratos();
@@ -19,10 +20,26 @@ export default function HomePage() {
   const router = useRouter();
   const { setNotification } = useNotifier();
 
-  if(error) {
-    setNotification({ message: error, type: 'error' });
-    if(error?.includes("Unauthorized")) logout();
-  };
+  const hasNotifiedRef = useRef(false);
+
+  useEffect(() => {
+    if (error && !hasNotifiedRef.current) {
+      setNotification({ message: error, type: "error" });
+
+      if (error.includes("Unauthorized")) {
+        logout();
+      }
+
+      hasNotifiedRef.current = true;
+    }
+  }, [error, setNotification, logout]);
+
+  // Reset the flag if error is cleared
+  useEffect(() => {
+    if (!error) {
+      hasNotifiedRef.current = false;
+    }
+  }, [error]);
 
   const handleSelectContract = (contract: Contrato) => {
     router.push(`/contratos/${contract.id}`);
@@ -44,6 +61,7 @@ export default function HomePage() {
           items-center 
           bg-white 
           rounded-2xl 
+          my-[20px]
           p-[20px] 
           w-[85%] 
           gap-[20px]
