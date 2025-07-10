@@ -83,26 +83,28 @@ export default function HomePage() {
               <p className='text-[20px] font-semibold text-center'>Cargando...</p>
               </>) 
               : 
-              (<div className='flex flex-wrap gap-[20px] justify-center items-center w-full'>
+              (<div className='flex flex-wrap gap-[20px] justify-center items-stretch w-full'>
                 {/* Card */}
                 {contratos?.map((contract: Contrato, index: number) => (
                   <Card 
-                    className={`max-w-[calc(1/3*100%-20px)] min-w-[calc(1/3*100%-20px)] min-h-[250px] w-[calc(1/3*100%-20px)] min-h-[250px] ` + (index % 2 == 0 ? 'bg-[#FF8403]' : 'bg-[#00CD6C]')} 
+                    className={`justify-evenly max-w-[calc(1/3*100%-20px)] min-w-[calc(1/3*100%-20px)] w-[calc(1/3*100%-20px)] min-h-[250px] ` + (index % 2 == 0 ? 'bg-[#FF8403]' : 'bg-[#00CD6C]')} 
                     title={`${contract.identificadorSimple}`}
                     subtitle={`Contrato #${contract.numeroContrato}`}
                     key={contract.id}
                   >
-                    <p className='text-[16px] font-normal h-[50px] w-full line-clamp-2'>{contract.objeto}</p>
-                    <p className=' font-light'><span className='font-semibold'>Contratista: </span>{contract.contratista}</p>
-                    <div className='flex flex-row justify-between items-center w-full'>
-                      <div>
-                        <span className='font-semibold'>Inicio: </span><p className='text-[16px] font-light'>{formatDate(contract.fechaInicio)}</p>
+                    <div>
+                      <p className='text-[16px] font-normal h-[50px] w-full line-clamp-2'>{contract.objeto}</p>
+                      <p className=' font-light'><span className='font-semibold'>Contratista: </span>{contract.contratista}</p>
+                      <div className='flex flex-row justify-between items-center w-full'>
+                        <div>
+                          <span className='font-semibold'>Inicio: </span><p className='text-[16px] font-light'>{formatDate(contract.fechaInicio)}</p>
+                        </div>
+                        <div>
+                          <span className='font-semibold'>Terminación: </span>
+                          <p className='text-[16px] font-light'>{formatDate(contract.fechaTerminacionActual)}</p>
+                        </div>
                       </div>
-                      <div>
-                        <span className='font-semibold'>Terminación: </span>
-                        <p className='text-[16px] font-light'>{formatDate(contract.fechaTerminacionActual)}</p>
-                      </div>
-                      </div>
+                    </div>
                     <div className='flex flex-col gap-[5px] self-end items-end mt-[15px]'>
                       <h6 className='text-white text-[20px] w-fit font-semibold'>
                         Valor: {formatCurrency(Number(contract.valorTotal))}

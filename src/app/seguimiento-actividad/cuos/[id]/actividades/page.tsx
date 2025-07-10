@@ -43,10 +43,10 @@ export default function SeguimientoActividadActividadesPage() {
                         <p className='text-[20px] font-semibold text-center'>Cargando...</p>
                         </>) 
                         : 
-                        <div className='flex flex-wrap gap-[20px] justify-center items-center w-full'>
+                        <div className='flex flex-wrap gap-[20px] justify-center items-stretch w-full'>
                             {actividades?.map((actividad, index) => (
                                 <Card 
-                                    className={"w-[calc(1/3*100%-20px)] max-w-[calc(1/3*100%-20px)] min-h-[240px] justify-between " + (index % 2 == 0 ? 'bg-[#0091C7]' : 'bg-[#42A9FF]')} 
+                                    className={"justify-evenly w-[calc(1/3*100%-20px)] max-w-[calc(1/3*100%-20px)] min-h-[240px] " + (index % 2 == 0 ? 'bg-[#0091C7]' : 'bg-[#42A9FF]')} 
                                     key={actividad?.id} 
                                     title={`${actividad?.actividad}`} 
                                     subtitle={actividad?.unidadesAvance} 
