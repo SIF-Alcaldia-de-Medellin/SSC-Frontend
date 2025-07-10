@@ -12,6 +12,8 @@ import BackButton from '@/components/BackButton';
 import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifier } from '@/context/NotifierContext';
+import { Modificacion } from '@/types/modificacion';
+import { Adicion } from '@/types/adicion';
 
 export default function ContratosPage() {
   const router = useRouter();
@@ -84,8 +86,8 @@ export default function ContratosPage() {
             </div>
             <div className='flex justify-between items-center w-full'>
               <div className='flex gap-[10px] items-center w-[60%]'>
-                <h6 className='text-[25px] font-bold text-[#742965] w-[150px]'>Estado:</h6>
-                <p className='w-[70%]'>{contrato?.estado?.toUpperCase()}</p>
+                <h6 className='text-[25px] font-bold text-[#742965] w-[150px]'>Fecha de Inicio:</h6>
+                <p className='w-[70%]'>{formatDate(contrato?.fechaInicio ?? '')}</p>
               </div>
               <div className='flex gap-[10px] justify-between items-center w-[40%]'>
                 <h6 className='text-[25px] font-bold text-[#742965] text-center w-[155px]'>Fecha de<br />Finalización:</h6>
@@ -113,6 +115,16 @@ export default function ContratosPage() {
                         </tr>
                       ))}
                     </tbody>
+                    {adiciones?.length > 0 && 
+                      <tfoot className='bg-[#78DAFF]'>
+                        <tr className='text-center font-normal py-[10px] font-semibold'>
+                          <td className='py-[10px] text-end'>Valor Total de Adiciones:</td>
+                          <td className='py-[10px]'>{
+                            formatCurrency(adiciones?.reduce((accumulator, adicion) => accumulator + Number(adicion?.valorAdicion ?? 0), 0))}
+                          </td>
+                        </tr>
+                      </tfoot>
+                    }
                   </table>
                   {adiciones?.length === 0 && (
                     <div className='text-center font-normal py-[10px] bg-[#A5E6FF] hover:bg-[#78DAFF] w-full'>
@@ -144,6 +156,17 @@ export default function ContratosPage() {
                         </tr>
                       ))}
                     </tbody>
+                    {modificaciones?.length > 0 && 
+                      <tfoot className='bg-[#81C6FF]'>
+                        <tr className='text-center font-normal py-[10px] font-semibold'>
+                          <td></td>
+                          <td className='py-[10px] text-end'>Duración Total:</td>
+                          <td className='py-[10px]'>
+                            {modificaciones?.reduce((accumulator, modificacion) => accumulator + Number(modificacion?.duracion ?? 0), 0)} dias
+                          </td>
+                        </tr>
+                      </tfoot>
+                    }
                   </table>
                   {modificaciones?.length === 0 && (
                     <div className='text-center font-normal py-[10px] bg-[#C0E2FF] hover:bg-[#81C6FF] w-full'>

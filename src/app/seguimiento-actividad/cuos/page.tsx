@@ -36,7 +36,7 @@ export default function SeguimientoActividadCuosPage() {
         <ProtectedRoute>
             <Header />
             <main className='flex justify-center items-center min-h-[calc(100dvh-110px)]'>
-                <div className='flex flex-col justify-center items-center bg-white rounded-2xl p-[20px] w-[85%] gap-[20px]'>
+                <div className='flex flex-col justify-center items-center bg-white rounded-2xl p-[20px] w-[85%] gap-[20px] my-[20px]'>
                 <h1 className='text-[48.8px] font-bold text-center'>
                     ¿Que <span className='text-[#FF8403]'>Frente de Obra</span> deseas realizarle seguimiento?
                 </h1>
