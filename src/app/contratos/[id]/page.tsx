@@ -12,8 +12,6 @@ import BackButton from '@/components/BackButton';
 import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifier } from '@/context/NotifierContext';
-import { Modificacion } from '@/types/modificacion';
-import { Adicion } from '@/types/adicion';
 
 export default function ContratosPage() {
   const router = useRouter();
@@ -59,7 +57,10 @@ export default function ContratosPage() {
             (
             <>
             <section className='flex justify-between items-center w-full'>
-              <h1 className='text-[48.8px] font-bold text-[#AE3E97]'>Contrato #{contrato?.numeroContrato}</h1>
+              <div>
+                <h1 className='text-[48.8px] font-bold text-[#AE3E97]'>Contrato #{contrato?.numeroContrato}</h1>
+                <h2 className='text-[25px] font-semibold text-[#AE3E97]'>{contrato?.identificadorSimple}</h2>
+              </div>
               <div className='p-[10px] bg-[#AE3E97] rounded-2xl text-white px-[20px] py-[10px] text-center'>
                 <p className='text-[25px] font-bold text-center'>Tipo:<br />{contrato?.tipoContrato.toUpperCase()}</p>
               </div>
@@ -115,7 +116,7 @@ export default function ContratosPage() {
                         </tr>
                       ))}
                     </tbody>
-                    {adiciones?.length > 0 && 
+                    {Array.isArray(adiciones) && adiciones?.length > 0 && 
                       <tfoot className='bg-[#78DAFF]'>
                         <tr className='text-center font-normal py-[10px] font-semibold'>
                           <td className='py-[10px] text-end'>Valor Total de Adiciones:</td>
@@ -156,7 +157,7 @@ export default function ContratosPage() {
                         </tr>
                       ))}
                     </tbody>
-                    {modificaciones?.length > 0 && 
+                    {Array.isArray(modificaciones) && modificaciones?.length > 0 && 
                       <tfoot className='bg-[#81C6FF]'>
                         <tr className='text-center font-normal py-[10px] font-semibold'>
                           <td></td>
