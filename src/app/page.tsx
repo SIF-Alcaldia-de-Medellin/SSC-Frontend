@@ -12,7 +12,7 @@ import { Contrato } from '@/types/contrato';
 import { formatDate } from '@/utils/formatDate';
 import NoContent from '@/components/NoContent';
 import { useNotifier } from '@/context/NotifierContext';
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function HomePage() {
   const {loading, error, contratos} = useContratos();
@@ -21,6 +21,7 @@ export default function HomePage() {
   const { setNotification } = useNotifier();
 
   const hasNotifiedRef = useRef(false);
+  const [contratosFiltrados, setContratosFiltrados] = useState<unknown>();
 
   useEffect(() => {
     if (error && !hasNotifiedRef.current) {
@@ -40,6 +41,10 @@ export default function HomePage() {
       hasNotifiedRef.current = false;
     }
   }, [error]);
+
+  useEffect(()=>{
+    setContratosFiltrados(contratos);
+  },[contratos]);
 
   const handleSelectContract = (contract: Contrato) => {
     router.push(`/contratos/${contract.id}`);
@@ -77,6 +82,10 @@ export default function HomePage() {
             <h1 className='text-[48.8px] font-bold text-center'>
               ¿Que <span className='text-[#3366CC]'>contrato</span> deseas realizarle seguimiento?
             </h1>
+            <div className='mt-[-10px] flex flex-row w-full items-center justify-center gap-[20px]'>
+              <input className='bg-white w-[calc(1/3*100%-20px)] border border-gray-400 rounded-full px-4 py-2' type="search" name="search" id="search" placeholder='Buscar Contrato'/>
+              <div className='flex bg-[#3366CC] opacity-80 h-[3px] w-[calc((1/3*100%-20px)*2+20px)]'></div>
+            </div>
             {loading ? 
               (<>
               <LoadingSpinner hexColor="3366CC" className='fill-blue-500'  />
@@ -85,7 +94,7 @@ export default function HomePage() {
               : 
               (<div className='flex flex-wrap gap-[20px] justify-center items-stretch w-full'>
                 {/* Card */}
-                {contratos?.map((contract: Contrato, index: number) => (
+                {contratosFiltrados?.map((contract: Contrato, index: number) => (
                   <Card 
                     className={`justify-evenly max-w-[calc(1/3*100%-20px)] min-w-[calc(1/3*100%-20px)] w-[calc(1/3*100%-20px)] min-h-[250px] ` + (index % 2 == 0 ? 'bg-[#FF8403]' : 'bg-[#00CD6C]')} 
                     title={`${contract.identificadorSimple}`}
