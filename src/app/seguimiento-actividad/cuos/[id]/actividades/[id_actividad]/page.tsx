@@ -77,7 +77,7 @@ export default function SeguimientoActividadFormularioPage() {
         try{
             await uploadSeguimientoActividad(formData);
             setNotification({ message: 'Seguimiento cargado correctamente', type: 'success' });
-            router.push(`/contratos/${contratoId}`);
+            router.push(`/seguimiento-actividad/cuos/${cuoId}/actividades?contratoId=${contratoId}`);
         } catch (err: unknown) {
             console.log(err);
         }
