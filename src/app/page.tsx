@@ -21,7 +21,7 @@ export default function HomePage() {
   const { setNotification } = useNotifier();
 
   const hasNotifiedRef = useRef(false);
-  const [contratosFiltrados, setContratosFiltrados] = useState<unknown>();
+  const [contratosFiltrados, setContratosFiltrados] = useState<Array<Contrato>>([]);
 
   useEffect(() => {
     if (error && !hasNotifiedRef.current) {
@@ -43,11 +43,19 @@ export default function HomePage() {
   }, [error]);
 
   useEffect(()=>{
-    setContratosFiltrados(contratos);
+    setContratosFiltrados(contratos || []);
   },[contratos]);
 
   const handleSelectContract = (contract: Contrato) => {
     router.push(`/contratos/${contract.id}`);
+  }
+
+  const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let { value } = e.target;
+    value = value.toUpperCase();
+    if(value == '') return setContratosFiltrados(contratos || []);
+    const contratosFiltrados = contratos?.filter((contrato)=>contrato?.numeroContrato.includes(value) || contrato?.identificadorSimple.toUpperCase().includes(value));
+    setContratosFiltrados(contratosFiltrados || []);
   }
 
   return (
@@ -83,7 +91,7 @@ export default function HomePage() {
               ¿Que <span className='text-[#3366CC]'>contrato</span> deseas realizarle seguimiento?
             </h1>
             <div className='mt-[-10px] flex flex-row w-full items-center justify-center gap-[20px]'>
-              <input className='bg-white w-[calc(1/3*100%-20px)] border border-gray-400 rounded-full px-4 py-2' type="search" name="search" id="search" placeholder='Buscar Contrato'/>
+              <input className='bg-white w-[calc(1/3*100%-20px)] border border-gray-400 rounded-full px-4 py-2 focus:outline-[#3366CC]' type="search" name="search" id="search" placeholder='Buscar Contrato' onChange={handleFilter}/>
               <div className='flex bg-[#3366CC] opacity-80 h-[3px] w-[calc((1/3*100%-20px)*2+20px)]'></div>
             </div>
             {loading ? 
@@ -124,7 +132,7 @@ export default function HomePage() {
                 ))}
               </div>)
             }
-            {contratos?.length === 0 && <NoContent element="contrato" />}
+            {!loading && contratosFiltrados?.length === 0 && <NoContent element="contrato" />}
           </div>
         </div>
       </main>
