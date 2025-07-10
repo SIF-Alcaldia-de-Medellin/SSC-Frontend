@@ -10,7 +10,7 @@ export const useModificacion = () => {
         try {
             await contratoService.uploadModificacion(modificacionData);
         } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar los seguimientos asociados a la actividad';
+            const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar la modificación';
             setError(errorMessage);
             throw err;
         } finally {

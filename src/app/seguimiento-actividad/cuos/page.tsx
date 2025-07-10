@@ -8,18 +8,29 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import BackButton from "@/components/BackButton";
 import { useCuos } from "@/hooks/useCuos";
 import { Cuo } from "@/types/cuo";
+import { useEffect } from "react";
+import { useNotifier } from "@/context/NotifierContext";
+import NoContent from "@/components/NoContent";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SeguimientoActividadCuosPage() {
     const searchParams = useSearchParams()
     const router = useRouter();
     const contratoId = searchParams.get('contratoId')
+    const { logout } = useAuth();
 
     const { loading, error, cuos } = useCuos(Number(contratoId));
-
+    const { setNotification } = useNotifier();
 
     const handleSelectCuo = (cuo: Cuo) => {
         router.push(`/seguimiento-actividad/cuos/${cuo.id}/actividades?contratoId=${contratoId}`);
-      }
+    }
+
+    useEffect(() => {
+        if(!!error) setNotification({ message: error, type: 'error' });
+        if(error?.includes("Unauthorized")) logout();
+        if(error?.includes("No tienes acceso a este contrato")) router.push(`/`);
+    }, [error, setNotification]);
 
     return (
         <ProtectedRoute>
@@ -53,6 +64,7 @@ export default function SeguimientoActividadCuosPage() {
                                 </div>
                             </Card>
                         ))}
+                        {cuos?.length === 0 && <NoContent element="CUO" />}
                     </div>
                 }
                 </div>

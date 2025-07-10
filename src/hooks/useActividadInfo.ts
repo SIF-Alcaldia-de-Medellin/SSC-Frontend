@@ -4,8 +4,8 @@ import { SeguimientoActividad } from '@/types/seguimiento_actividad';
 
 export const useActividadInfo = (id: number) => {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [actividadInfoSeguimiento, setActividadInfoSeguimiento] = useState<SeguimientoActividad | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const uploadSeguimientoActividad = async (seguimiento: SeguimientoActividadForm) => {
         setLoading(true);
@@ -15,7 +15,7 @@ export const useActividadInfo = (id: number) => {
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar los seguimientos asociados a la actividad';
             setError(errorMessage);
-            throw err;
+            throw errorMessage;
         } finally {
             setLoading(false);
         }
@@ -30,15 +30,18 @@ export const useActividadInfo = (id: number) => {
                 setActividadInfoSeguimiento(actividadInfoSeguimientoData);
             } catch (err: unknown) {
                 const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar los seguimientos asociados a la actividad';
-                if(errorMessage.includes("Error: No se encontraron seguimientos para la actividad")) {
+                if(!errorMessage.includes("No se encontraron seguimientos para la actividad")) {
                     setError(errorMessage);
-                    throw err;
                 }else{
-                    const actividadInfo =  await actividadesService.getActividadById(id);
-                    setActividadInfoSeguimiento({
-                        ...actividadInfoSeguimiento,
-                        actividad: actividadInfo
-                    });
+                    try {
+                        const actividadInfo = await actividadesService.getActividadById(id);
+                        setActividadInfoSeguimiento({
+                            actividad: actividadInfo,
+                        });
+                    } catch (subErr: unknown) {
+                        const subErrorMessage = subErr instanceof Error ? subErr.message : 'Error al obtener la actividad';
+                        setError(subErrorMessage);
+                    }
                 }
             } finally {
                 setLoading(false)

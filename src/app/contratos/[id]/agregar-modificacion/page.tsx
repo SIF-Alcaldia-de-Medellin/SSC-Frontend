@@ -2,10 +2,11 @@
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { formatCurrency } from "@/utils/formatCurrency";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useModificacion } from "@/hooks/useModificacion";
+import { useAuth } from "@/context/AuthContext";
+import { useNotifier } from "@/context/NotifierContext";
 
 interface ErrorInputType {
     tipo?: string,
@@ -23,7 +24,8 @@ export default function SeguimientoGeneralFormularioPage() {
     const { id: contratoId } = useParams();
     const router = useRouter();
     const { loading, error, uploadModificacion } = useModificacion();
-
+    const { logout } = useAuth();
+    const { setNotification } = useNotifier();
     const [formData, setFormData] = useState({
         contratoId: Number(contratoId),
         tipo: '',
@@ -75,16 +77,23 @@ export default function SeguimientoGeneralFormularioPage() {
         if(validateForm()) return;
         try{
             await uploadModificacion(formData);
+            setNotification({ message: 'Modificación cargada correctamente', type: 'success' });
             router.push(`/contratos/${contratoId}`);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar la adición';
-            alert(errorMessage);
+            console.log('Error: ', errorMessage);
         }
     }
     
     const cancelAdicion = () => {
         router.push(`/contratos/${contratoId}`);
     }
+
+    useEffect(() => {
+        if(!!error) setNotification({ message: error, type: 'error' }); 
+        if(error?.includes("Unauthorized")) logout();
+        if(error?.includes("No tienes acceso a este contrato")) router.push(`/`);
+    }, [error, setNotification]);
 
     return (
         <ProtectedRoute>
@@ -107,8 +116,8 @@ export default function SeguimientoGeneralFormularioPage() {
                             <div className='flex flex-row gap-[20px] items-center justify-center w-full'>
                                 <div className='flex flex-col gap-[10px] items-center justify-center w-1/3'>
                                     <label htmlFor="tipo" className='text-[20px] font-semibold font-bold text-center text-wrap'><span className="text-[#F80000]">*</span>Tipo de modificación</label>
-                                    <select name="tipo" id="tipo" className='w-full border border-gray-300 rounded-md p-1 text-center focus:outline-[#3366CC]' onChange={handleChange}>
-                                        <option value="" disabled hidden selected>Seleccionar tipo</option>
+                                    <select name="tipo" id="tipo" className='w-full border border-gray-300 rounded-md p-1 text-center focus:outline-[#3366CC]' onChange={handleChange} defaultValue={"default"}>
+                                        <option value="default" key="default" disabled hidden>Seleccionar tipo</option>
                                         {Object.values(TipoModificacion).map((tipo) => (
                                             <option key={tipo} value={tipo}>{tipo}</option>
                                         ))}

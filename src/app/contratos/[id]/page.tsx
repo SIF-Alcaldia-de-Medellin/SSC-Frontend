@@ -9,11 +9,16 @@ import { faFileLines, faListCheck, faPlus } from '@fortawesome/free-solid-svg-ic
 import { useContratoInfo } from '@/hooks/useContratoInfo';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import BackButton from '@/components/BackButton';
+import { useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useNotifier } from '@/context/NotifierContext';
 
 export default function ContratosPage() {
   const router = useRouter();
   const { id } = useParams();
   const { loading, error, contrato, modificaciones, adiciones, seguimientoGeneral } = useContratoInfo(Number(id));
+  const { logout } = useAuth();
+  const { setNotification } = useNotifier();
 
   const handleAgregarAdicion = () => {
     router.push(`/contratos/${id}/agregar-adicion`);
@@ -30,6 +35,13 @@ export default function ContratosPage() {
   const handleSeguimientoPorActividad = () => {
     router.push(`/seguimiento-actividad/cuos?contratoId=${id}`);
   }
+
+  useEffect(() => {
+    if(!!error) setNotification({ message: error, type: 'error' });
+    if(error?.includes("Unauthorized")) logout();
+    if(error?.includes("Contrato no encontrado")) router.push(`/`);
+    if(error?.includes("No tienes acceso a este contrato")) router.push(`/`);
+  }, [error, setNotification]);
 
   return (
     <ProtectedRoute>

@@ -4,8 +4,10 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAdicion } from "@/hooks/useAdicion";
+import { useNotifier } from "@/context/NotifierContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface ErrorInputType {
     valorAdicion?: string, 
@@ -17,7 +19,8 @@ export default function SeguimientoGeneralFormularioPage() {
     const { id: contratoId } = useParams();
     const router = useRouter();
     const { loading, error, uploadAdicion } = useAdicion();
-
+    const { logout } = useAuth();
+    const { setNotification } = useNotifier();
     const [formData, setFormData] = useState({
         contratoId: Number(contratoId),
         valorAdicion: 0, 
@@ -66,16 +69,23 @@ export default function SeguimientoGeneralFormularioPage() {
         if(validateForm()) return;
         try{
             await uploadAdicion(formData);
+            setNotification({ message: 'Adición cargada correctamente', type: 'success' });
             router.push(`/contratos/${contratoId}`);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar la adición';
-            alert(errorMessage);
+            console.log('Error: ', errorMessage);
         }
     }
     
     const cancelAdicion = () => {
         router.push(`/contratos/${contratoId}`);
     }
+
+    useEffect(() => {
+        if(!!error) setNotification({ message: error, type: 'error' }); 
+        if(error?.includes("Unauthorized")) logout();
+        if(error?.includes("No tienes acceso a este contrato")) router.push(`/`);
+    }, [error, setNotification]);
 
     return (
         <ProtectedRoute>

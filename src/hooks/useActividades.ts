@@ -8,7 +8,7 @@ export const useActividades = (id: number) => {
     const [actividades, setActividades] = useState<Actividad[] | null>(null);
 
     useEffect(() => {
-        const loadCuos = async () => {
+        const loadActividades = async () => {
             setLoading(true);
             try { 
                 const actividades = await actividadesService.getActividadesByCuoId(id);
@@ -16,13 +16,12 @@ export const useActividades = (id: number) => {
             } catch (err: unknown) {
                 const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar los cuos asociados al contrato';
                 setError(errorMessage);
-                throw err;
             } finally {
                 setLoading(false)
             }
         };
 
-        loadCuos();
+        loadActividades();
     }, [id]);
 
     return { loading, error, actividades };

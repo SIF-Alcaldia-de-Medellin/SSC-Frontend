@@ -7,14 +7,27 @@ import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import BackButton from "@/components/BackButton";
 import { useActividades } from "@/hooks/useActividades";
+import { useNotifier } from "@/context/NotifierContext";
+import { useEffect } from "react";
+import NoContent from "@/components/NoContent";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SeguimientoActividadActividadesPage() {
     const { id: cuoId } = useParams();
     const searchParams = useSearchParams()
     const contratoId = searchParams.get('contratoId')
     const router = useRouter();
+    const { logout } = useAuth();
 
     const { loading, error, actividades } = useActividades(Number(cuoId));
+    const { setNotification } = useNotifier();
+
+    useEffect(() => {
+        if(!!error) setNotification({ message: error, type: 'error' });
+        if(error?.includes("Unauthorized")) logout();
+        if(error?.includes("No se encontró el CUO con ID")) router.push(`/seguimiento-actividad/cuos?contratoId=${contratoId}`);
+        if(error?.includes("No tienes acceso a este contrato")) router.push(`/`);
+    }, [error, setNotification]);
 
     return (
         <ProtectedRoute>
@@ -43,9 +56,9 @@ export default function SeguimientoActividadActividadesPage() {
                                     </div>
                                 </Card>
                             ))}
+                            {actividades?.length === 0 && <NoContent element="actividade" />}
                         </div>
                     }
-                    
                 </div>
                 <BackButton color="purple" to={`/seguimiento-actividad/cuos?contratoId=${contratoId}`}/>
             </main>

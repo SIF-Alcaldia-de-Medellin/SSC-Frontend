@@ -5,7 +5,9 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useActividadInfo } from "@/hooks/useActividadInfo";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNotifier } from "@/context/NotifierContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface ErrorInputType {
     avanceFisico?: string, 
@@ -19,7 +21,8 @@ export default function SeguimientoActividadFormularioPage() {
     const searchParams = useSearchParams();
     const contratoId = searchParams.get('contratoId');
     const router = useRouter();
-
+    const { setNotification } = useNotifier();
+    const { logout } = useAuth();
     const { loading, error, actividadInfoSeguimiento, uploadSeguimientoActividad } = useActividadInfo(Number(actividadId));
 
     const [formData, setFormData] = useState({
@@ -73,16 +76,23 @@ export default function SeguimientoActividadFormularioPage() {
         if(validateForm()) return;
         try{
             await uploadSeguimientoActividad(formData);
+            setNotification({ message: 'Seguimiento cargado correctamente', type: 'success' });
             router.push(`/contratos/${contratoId}`);
         } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar los seguimientos asociados a la actividad';
-            alert(errorMessage);
+            console.log(err);
         }
     }
     
     const cancelSeguimiento = () => {
         router.push(`/seguimiento-actividad/cuos/${cuoId}/actividades?contratoId=${contratoId}`);
     }
+
+    useEffect(() => {
+        if(!!error) setNotification({ message: error, type: 'error' });
+        if(error?.includes("Unauthorized")) logout();
+        if(error?.includes("No se encontró la actividad con ID")) router.push(`/seguimiento-actividad/cuos/${cuoId}/actividades?contratoId=${contratoId}`);
+        if(error?.includes("No tienes acceso a este contrato")) router.push(`/`);
+    }, [error, setNotification]);
 
     return (
         <ProtectedRoute>

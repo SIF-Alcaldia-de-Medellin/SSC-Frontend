@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { NotifierProvider } from "@/context/NotifierContext";
+import Notification from "@/components/Notification";
 
 export const metadata: Metadata = {
   title: "SSC - Alcaldia de Medellin",
@@ -29,7 +31,10 @@ export default function RootLayout({
       </head>
       <body className="bg-pattern min-h-screen">
         <AuthProvider>
-          {children}
+          <NotifierProvider>
+            {children}
+            <Notification />
+          </NotifierProvider>
         </AuthProvider>
       </body>
     </html>

@@ -5,7 +5,9 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useSeguimientoGeneral } from "@/hooks/useSeguimientoGeneral";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useNotifier } from "@/context/NotifierContext";
 
 interface ErrorInputType {
     avanceFisico?: string, 
@@ -16,7 +18,8 @@ interface ErrorInputType {
 export default function SeguimientoGeneralFormularioPage() {
     const { id: contratoId } = useParams();
     const router = useRouter();
-
+    const { logout } = useAuth();
+    const { setNotification } = useNotifier();
     const { loading, error, seguimientoGeneral, uploadSeguimientoGeneral } = useSeguimientoGeneral(Number(contratoId));
 
     const [formData, setFormData] = useState({
@@ -67,16 +70,24 @@ export default function SeguimientoGeneralFormularioPage() {
         if(validateForm()) return;
         try{
             await uploadSeguimientoGeneral(formData);
+            setNotification({ message: 'Seguimiento general cargado correctamente', type: 'success' });
             router.push(`/contratos/${contratoId}`);
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar el seguimiento general del contrato';
-            alert(errorMessage);
+            console.log('Error: ', errorMessage);
         }
     }
     
     const cancelSeguimiento = () => {
         router.push(`/contratos/${contratoId}`);
     }
+
+    useEffect(() => {
+        if(!!error) setNotification({ message: error, type: 'error' });
+        if(error?.includes("Unauthorized")) logout();
+        if(error?.includes("Contrato no encontrado")) router.push(`/`);
+        if(error?.includes("No tienes acceso a este contrato")) router.push(`/`);
+      }, [error, setNotification]);
 
     return (
         <ProtectedRoute>

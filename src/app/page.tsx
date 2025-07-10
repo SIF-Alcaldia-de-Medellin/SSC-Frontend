@@ -10,13 +10,19 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useContratos } from '@/hooks/useContratos';
 import { Contrato } from '@/types/contrato';
 import { formatDate } from '@/utils/formatDate';
+import NoContent from '@/components/NoContent';
+import { useNotifier } from '@/context/NotifierContext';
 
 export default function HomePage() {
   const {loading, error, contratos} = useContratos();
   const { logout } = useAuth();
   const router = useRouter();
+  const { setNotification } = useNotifier();
 
-  if(error) logout();
+  if(error) {
+    setNotification({ message: error, type: 'error' });
+    if(error?.includes("Unauthorized")) logout();
+  };
 
   const handleSelectContract = (contract: Contrato) => {
     router.push(`/contratos/${contract.id}`);
@@ -89,6 +95,7 @@ export default function HomePage() {
                 ))}
               </div>)
             }
+            {contratos?.length === 0 && <NoContent element="contrato" />}
           </div>
         </div>
       </main>

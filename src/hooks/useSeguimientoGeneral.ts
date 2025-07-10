@@ -30,7 +30,8 @@ export const useSeguimientoGeneral = (id: number) => {
                 setSeguimientoGeneral(seguimientoGeneralData);
             } catch (err: unknown) {
                 const errorMessage = err instanceof Error ? err.message : 'Ha ocurrido un error al cargar los seguimientos asociados a la actividad';
-                if(errorMessage.includes("Error: No se encontraron seguimientos para el contrato")) {
+                console.log('errorMessage', errorMessage);
+                if(!errorMessage.includes("No se encontraron seguimientos")) {
                     setError(errorMessage);
                     throw err;
                 }else{
