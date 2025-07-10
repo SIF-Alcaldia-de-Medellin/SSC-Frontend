@@ -161,7 +161,7 @@ export default function ContratosPage() {
             <section className='flex justify-center items-center w-full gap-[20px]'>
               <div className='flex flex-col gap-[10px] w-[calc(50%-10px)] text-center'>
                 <h6 className='font-semibold text-[20px]'>Coste total de obra ejecutada:</h6>
-                <h2 className='text-[55px] font-extrabold'>{formatCurrency(Number(!seguimientoGeneral ? '0' : seguimientoGeneral?.valorEjecutado.toFixed(0)))}</h2>
+                <h2 className='text-[55px] font-extrabold'>{formatCurrency(Number(!seguimientoGeneral || !seguimientoGeneral.valorEjecutado ? '0' : seguimientoGeneral.valorEjecutado.toFixed(0)))}</h2>
                 <button className='bg-[#3366CC] hover:bg-[#2A55AA] text-white px-[20px] py-[20px] rounded-2xl cursor-pointer text-[20px] font-semibold self-center w-[90%] flex items-center justify-center gap-[10px]' onClick={handleSeguimientoGeneral}>
                   <FontAwesomeIcon icon={faFileLines} className='text-[36px]' /> Realizar Seguimiento General
                 </button>

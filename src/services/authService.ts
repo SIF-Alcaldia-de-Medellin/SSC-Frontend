@@ -1,5 +1,5 @@
 import { apiClient } from './api';
-import { Usuario } from '@/context/AuthContext';
+import { Usuario } from '@/types/usuario';
 
 export interface LoginCredentials {
     email: string;

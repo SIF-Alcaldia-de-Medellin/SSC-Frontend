@@ -1,4 +1,4 @@
-const API_BASE_URL = /* process.env.NEXT_PUBLIC_API_URL */"https://ssc-backend-bpfkhpaugdezgjfu.centralus-01.azurewebsites.net" || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://ssc-backend-bpfkhpaugdezgjfu.centralus-01.azurewebsites.net";
 
 export const apiClient = {
   async request(endpoint: string, options: RequestInit = {}) {
@@ -24,11 +24,11 @@ export const apiClient = {
   },
 
   get: (endpoint: string, options?: RequestInit) => apiClient.request(endpoint, options || {}),
-  post: (endpoint: string, data: any) => apiClient.request(endpoint, {
+  post: (endpoint: string, data: unknown) => apiClient.request(endpoint, {
     method: 'POST',
     body: JSON.stringify(data),
   }),
-  put: (endpoint: string, data: any) => apiClient.request(endpoint, {
+  put: (endpoint: string, data: unknown) => apiClient.request(endpoint, {
     method: 'PUT',
     body: JSON.stringify(data),
   }),
