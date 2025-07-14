@@ -25,7 +25,7 @@ export default function SeguimientoActividadActividadesPage() {
     useEffect(() => {
         if(!!error) setNotification({ message: error, type: 'error' });
         if(error?.includes("Unauthorized")) logout();
-        if(error?.includes("No se encontró el CUO con ID")) router.push(`/seguimiento-actividad/cuos?contratoId=${contratoId}`);
+        if(error?.includes("No se encontró el CUO con ID")) router.push(`/cuos?contratoId=${contratoId}`);
         if(error?.includes("No tienes acceso a este contrato")) router.push(`/`);
     }, [error, setNotification]);
 
@@ -52,7 +52,7 @@ export default function SeguimientoActividadActividadesPage() {
                                     subtitle={actividad?.unidadesAvance} 
                                 >
                                     <div className='flex flex-col gap-[5px] self-end items-end'>
-                                        <button className='bg-[#AE3E97] hover:bg-[#91347E] transition-all duration-300 text-white px-[20px] py-[10px] rounded-full w-fit cursor-pointer' onClick={() => router.push(`/seguimiento-actividad/cuos/${cuoId}/actividades/${actividad.id}?contratoId=${contratoId}`)}>Seleccionar</button>
+                                        <button className='bg-[#AE3E97] hover:bg-[#91347E] transition-all duration-300 text-white px-[20px] py-[10px] rounded-full w-fit cursor-pointer' onClick={() => router.push(`/cuos/${cuoId}/actividades/${actividad.id}?contratoId=${contratoId}`)}>Seleccionar</button>
                                     </div>
                                 </Card>
                             ))}
@@ -60,7 +60,7 @@ export default function SeguimientoActividadActividadesPage() {
                         </div>
                     }
                 </div>
-                <BackButton color="purple" to={`/seguimiento-actividad/cuos?contratoId=${contratoId}`}/>
+                <BackButton color="purple" to={`/cuos?contratoId=${contratoId}`}/>
             </main>
         </ProtectedRoute>
     )

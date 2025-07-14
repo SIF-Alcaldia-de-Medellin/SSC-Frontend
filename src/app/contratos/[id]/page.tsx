@@ -33,7 +33,7 @@ export default function ContratosPage() {
   }
 
   const handleSeguimientoPorActividad = () => {
-    router.push(`/seguimiento-actividad/cuos?contratoId=${id}`);
+    router.push(`/cuos?contratoId=${id}`);
   }
 
   useEffect(() => {

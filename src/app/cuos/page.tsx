@@ -23,7 +23,7 @@ export default function SeguimientoActividadCuosPage() {
     const { setNotification } = useNotifier();
 
     const handleSelectCuo = (cuo: Cuo) => {
-        router.push(`/seguimiento-actividad/cuos/${cuo.id}/actividades?contratoId=${contratoId}`);
+        router.push(`/cuos/${cuo.id}/actividades?contratoId=${contratoId}`);
     }
 
     useEffect(() => {
