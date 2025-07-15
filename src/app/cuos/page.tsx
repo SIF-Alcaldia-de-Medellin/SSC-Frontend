@@ -23,7 +23,7 @@ export default function SeguimientoActividadCuosPage() {
     const { setNotification } = useNotifier();
 
     const handleSelectCuo = (cuo: Cuo) => {
-        router.push(`/seguimiento-actividad/cuos/${cuo.id}/actividades?contratoId=${contratoId}`);
+        router.push(`/cuos/${cuo.id}/actividades?contratoId=${contratoId}`);
     }
 
     useEffect(() => {
@@ -46,16 +46,18 @@ export default function SeguimientoActividadCuosPage() {
                     <p className='text-[20px] font-semibold text-center'>Cargando...</p>
                     </>) 
                     : 
-                    <div className='flex flex-wrap gap-[20px] justify-center items-center w-full'>
+                    <div className='flex flex-wrap gap-[20px] justify-center items-stretch w-full'>
                         {cuos?.map((cuo, index) => (
                             <Card 
-                                className={"max-w-[calc(1/3*100%-20px)] w-[calc(1/3*100%-20px)] min-h-[250px] " + (index % 2 == 0 ? 'bg-[#006AC3]' : 'bg-[#00AEEF]')} 
+                                className={"justify-evenly max-w-[calc(1/3*100%-20px)] w-[calc(1/3*100%-20px)] min-h-[250px] " + (index % 2 == 0 ? 'bg-[#006AC3]' : 'bg-[#00AEEF]')} 
                                 key={cuo.id} 
                                 title={`${cuo.numero}`} 
                                 subtitle={cuo.comuna} 
                             >
-                                <p className='text-[16px] font-normal text-wrap h-[50px] w-full line-clamp-2'>{cuo.descripcion}</p>
-                                <p className=' font-light'><span className='font-semibold'>Barrio: </span>{cuo.barrio}</p>
+                                <div>
+                                    <p className='text-[16px] font-normal text-wrap h-[50px] w-full line-clamp-2'>{cuo.descripcion}</p>
+                                    <p className=' font-light'><span className='font-semibold'>Barrio: </span>{cuo.barrio}</p>
+                                </div>
                                 <div className='flex flex-col gap-[5px] self-end items-end'>
                                     <h6 className='text-white text-[20px] w-fit font-semibold'>
                                         Total Actividades: {cuo.cantidadActividades}

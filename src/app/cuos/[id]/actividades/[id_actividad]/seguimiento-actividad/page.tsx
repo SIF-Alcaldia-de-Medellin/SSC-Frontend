@@ -77,20 +77,20 @@ export default function SeguimientoActividadFormularioPage() {
         try{
             await uploadSeguimientoActividad(formData);
             setNotification({ message: 'Seguimiento cargado correctamente', type: 'success' });
-            router.push(`/seguimiento-actividad/cuos/${cuoId}/actividades?contratoId=${contratoId}`);
+            router.push(`/cuos/${cuoId}/actividades/?contratoId=${contratoId}`);
         } catch (err: unknown) {
             console.log(err);
         }
     }
     
     const cancelSeguimiento = () => {
-        router.push(`/seguimiento-actividad/cuos/${cuoId}/actividades?contratoId=${contratoId}`);
+        router.push(`/cuos/${cuoId}/actividades/${actividadId}?contratoId=${contratoId}`);
     }
 
     useEffect(() => {
         if(!!error) setNotification({ message: error, type: 'error' });
         if(error?.includes("Unauthorized")) logout();
-        if(error?.includes("No se encontró la actividad con ID")) router.push(`/seguimiento-actividad/cuos/${cuoId}/actividades?contratoId=${contratoId}`);
+        if(error?.includes("No se encontró la actividad con ID")) router.push(`/cuos/${cuoId}/actividades?contratoId=${contratoId}`);
         if(error?.includes("No tienes acceso a este contrato")) router.push(`/`);
     }, [error, setNotification]);
 

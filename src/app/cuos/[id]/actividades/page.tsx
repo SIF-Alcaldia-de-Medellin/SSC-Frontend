@@ -25,7 +25,7 @@ export default function SeguimientoActividadActividadesPage() {
     useEffect(() => {
         if(!!error) setNotification({ message: error, type: 'error' });
         if(error?.includes("Unauthorized")) logout();
-        if(error?.includes("No se encontró el CUO con ID")) router.push(`/seguimiento-actividad/cuos?contratoId=${contratoId}`);
+        if(error?.includes("No se encontró el CUO con ID")) router.push(`/cuos?contratoId=${contratoId}`);
         if(error?.includes("No tienes acceso a este contrato")) router.push(`/`);
     }, [error, setNotification]);
 
@@ -43,16 +43,16 @@ export default function SeguimientoActividadActividadesPage() {
                         <p className='text-[20px] font-semibold text-center'>Cargando...</p>
                         </>) 
                         : 
-                        <div className='flex flex-wrap gap-[20px] justify-center items-center w-full'>
+                        <div className='flex flex-wrap gap-[20px] justify-center items-stretch w-full'>
                             {actividades?.map((actividad, index) => (
                                 <Card 
-                                    className={"w-[calc(1/3*100%-20px)] max-w-[calc(1/3*100%-20px)] min-h-[240px] justify-between " + (index % 2 == 0 ? 'bg-[#0091C7]' : 'bg-[#42A9FF]')} 
+                                    className={"justify-evenly w-[calc(1/3*100%-20px)] max-w-[calc(1/3*100%-20px)] min-h-[240px] " + (index % 2 == 0 ? 'bg-[#0091C7]' : 'bg-[#42A9FF]')} 
                                     key={actividad?.id} 
                                     title={`${actividad?.actividad}`} 
                                     subtitle={actividad?.unidadesAvance} 
                                 >
                                     <div className='flex flex-col gap-[5px] self-end items-end'>
-                                        <button className='bg-[#AE3E97] hover:bg-[#91347E] transition-all duration-300 text-white px-[20px] py-[10px] rounded-full w-fit cursor-pointer' onClick={() => router.push(`/seguimiento-actividad/cuos/${cuoId}/actividades/${actividad.id}?contratoId=${contratoId}`)}>Seleccionar</button>
+                                        <button className='bg-[#AE3E97] hover:bg-[#91347E] transition-all duration-300 text-white px-[20px] py-[10px] rounded-full w-fit cursor-pointer' onClick={() => router.push(`/cuos/${cuoId}/actividades/${actividad.id}?contratoId=${contratoId}`)}>Seleccionar</button>
                                     </div>
                                 </Card>
                             ))}
@@ -60,7 +60,7 @@ export default function SeguimientoActividadActividadesPage() {
                         </div>
                     }
                 </div>
-                <BackButton color="purple" to={`/seguimiento-actividad/cuos?contratoId=${contratoId}`}/>
+                <BackButton color="purple" to={`/cuos?contratoId=${contratoId}`}/>
             </main>
         </ProtectedRoute>
     )

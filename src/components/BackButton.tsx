@@ -21,6 +21,11 @@ export default function BackButton({color = 'purple', to = '/'}) {
             backgroundColor: '#FF8403',
             hoverColor: '#FF6B00',
             textColor: 'white',
+        },
+        darkBlue: {
+            backgroundColor: '#004884',
+            hoverColor: '#003C6E',
+            textColor: 'white',
         }
     };
 

@@ -1,15 +1,23 @@
 "use client";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Image from 'next/image';
 import logo from '@/assets/logo-distrito-de-medellin.png';
 import PublicRoute from '@/components/PublicRoute';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const { login, loading, error } = useAuth();
+  const { login, loading, user, error } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const router = useRouter();
+
+  useEffect(()=>{
+    if (!user) return;
+    const pathTo = (!user?.mustChangePassword) ? '/' : '/update-password';
+    router.push(pathTo);
+  },[user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
