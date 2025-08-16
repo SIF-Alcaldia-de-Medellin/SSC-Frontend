@@ -37,4 +37,7 @@ export const authService = {
         });
     },
 
+    async updatePasswordFirstTime(body: {newPassword: string}): Promise<void>{
+        return apiClient.post('/auth/first-login-change-password', body);
+    }
 };

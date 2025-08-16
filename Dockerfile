@@ -42,6 +42,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Copiar archivos públicos desde el contexto de Docker
 COPY public ./public
+COPY --chown=nextjs:nodejs .env .env
 
 USER nextjs
 

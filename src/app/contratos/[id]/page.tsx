@@ -33,7 +33,7 @@ export default function ContratosPage() {
   }
 
   const handleSeguimientoPorActividad = () => {
-    router.push(`/seguimiento-actividad/cuos?contratoId=${id}`);
+    router.push(`/cuos?contratoId=${id}`);
   }
 
   useEffect(() => {
@@ -57,7 +57,10 @@ export default function ContratosPage() {
             (
             <>
             <section className='flex justify-between items-center w-full'>
-              <h1 className='text-[48.8px] font-bold text-[#AE3E97]'>Contrato #{contrato?.numeroContrato}</h1>
+              <div>
+                <h1 className='text-[48.8px] font-bold text-[#AE3E97]'>Contrato #{contrato?.numeroContrato}</h1>
+                <h2 className='text-[25px] font-semibold text-[#AE3E97]'>{contrato?.identificadorSimple}</h2>
+              </div>
               <div className='p-[10px] bg-[#AE3E97] rounded-2xl text-white px-[20px] py-[10px] text-center'>
                 <p className='text-[25px] font-bold text-center'>Tipo:<br />{contrato?.tipoContrato.toUpperCase()}</p>
               </div>
@@ -84,8 +87,8 @@ export default function ContratosPage() {
             </div>
             <div className='flex justify-between items-center w-full'>
               <div className='flex gap-[10px] items-center w-[60%]'>
-                <h6 className='text-[25px] font-bold text-[#742965] w-[150px]'>Estado:</h6>
-                <p className='w-[70%]'>{contrato?.estado?.toUpperCase()}</p>
+                <h6 className='text-[25px] font-bold text-[#742965] w-[150px]'>Fecha de Inicio:</h6>
+                <p className='w-[70%]'>{formatDate(contrato?.fechaInicio ?? '')}</p>
               </div>
               <div className='flex gap-[10px] justify-between items-center w-[40%]'>
                 <h6 className='text-[25px] font-bold text-[#742965] text-center w-[155px]'>Fecha de<br />Finalización:</h6>
@@ -113,6 +116,16 @@ export default function ContratosPage() {
                         </tr>
                       ))}
                     </tbody>
+                    {Array.isArray(adiciones) && adiciones?.length > 0 && 
+                      <tfoot className='bg-[#78DAFF]'>
+                        <tr className='text-center font-normal py-[10px] font-semibold'>
+                          <td className='py-[10px] text-end'>Valor Total de Adiciones:</td>
+                          <td className='py-[10px]'>{
+                            formatCurrency(adiciones?.reduce((accumulator, adicion) => accumulator + Number(adicion?.valorAdicion ?? 0), 0))}
+                          </td>
+                        </tr>
+                      </tfoot>
+                    }
                   </table>
                   {adiciones?.length === 0 && (
                     <div className='text-center font-normal py-[10px] bg-[#A5E6FF] hover:bg-[#78DAFF] w-full'>
@@ -144,6 +157,17 @@ export default function ContratosPage() {
                         </tr>
                       ))}
                     </tbody>
+                    {Array.isArray(modificaciones) && modificaciones?.length > 0 && 
+                      <tfoot className='bg-[#81C6FF]'>
+                        <tr className='text-center font-normal py-[10px] font-semibold'>
+                          <td></td>
+                          <td className='py-[10px] text-end'>Duración Total:</td>
+                          <td className='py-[10px]'>
+                            {modificaciones?.reduce((accumulator, modificacion) => accumulator + Number(modificacion?.duracion ?? 0), 0)} dias
+                          </td>
+                        </tr>
+                      </tfoot>
+                    }
                   </table>
                   {modificaciones?.length === 0 && (
                     <div className='text-center font-normal py-[10px] bg-[#C0E2FF] hover:bg-[#81C6FF] w-full'>

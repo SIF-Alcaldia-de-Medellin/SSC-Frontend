@@ -93,7 +93,7 @@ export default function SeguimientoGeneralFormularioPage() {
         <ProtectedRoute>
             <Header />
             <main className='flex justify-center items-center min-h-[calc(100dvh-110px)]'>
-                <div className='flex flex-col justify-center items-center bg-white rounded-2xl p-[20px] w-[85%] gap-[20px] my-2.5'>
+                <div className='flex flex-col justify-center items-center bg-white rounded-2xl p-[20px] w-[85%] gap-[20px] my-[20px]'>
                     <div>
                         <h1 className='text-[48.8px] font-bold text-center'>
                             Seguimiento General del Contrato
@@ -125,11 +125,11 @@ export default function SeguimientoGeneralFormularioPage() {
                                 <hr className='w-[5px] min-h-[300px] bg-gray-300 border-gray-300' />
                                 <div className='flex flex-col gap-[10px] items-center justify-center max-w-[45%]'>
                                     <div className='flex flex-col items-center justify-center'>
-                                        <h3 className='text-[31.3px] font-semibold text-center text-wrap max-w-[80%] text-[#D76E00]'>Avance Fisico
+                                        <h3 className='text-[31.3px] font-semibold text-center text-wrap max-w-[80%] text-[#D76E00]'>Ultimo Avance Fisico
                                         Acumulado:</h3>
                                         <h2 className='flex flex-row items-center justify-center text-[48.8px] font-bold text-center text-wrap text-[#FF8403] gap-[10px]'>{seguimientoGeneral?.avanceFisico || 0}<span className='flex items-center justify-center text-[20px] font-semibold text-center text-wrap max-w-[40%] text-wrap'>%</span></h2>
                                     </div>
-                                    <label htmlFor="avanceFisico" className='text-[20px] font-semibold font-bold text-center text-wrap'><span className="text-[#F80000]">*</span>Avance Físico</label>
+                                    <label htmlFor="avanceFisico" className='text-[20px] font-semibold font-bold text-center text-wrap'><span className="text-[#F80000]">*</span>Avance Físico Acumulado:</label>
                                     <input type="number" id="avanceFisico" name="avanceFisico" max={100} className='border border-gray-300 rounded-md p-1 text-center focus:outline-[#FF8403]' placeholder={`${seguimientoGeneral?.avanceFisico || 0}%`} onChange={handleChange} />
                                     {errorInput?.avanceFisico && <p className='text-[#F80000] text-[16px] italic text-center text-wrap max-w-[90%]'>{errorInput?.avanceFisico}</p>}
                                 </div>

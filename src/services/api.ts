@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://ssc-backend-bpfkhpaugdezgjfu.centralus-01.azurewebsites.net";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "localhost:3000";
 
 export const apiClient = {
   async request(endpoint: string, options: RequestInit = {}) {
